@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="search-view">
+      <div id="app-header">
+        <svg id="app-mark" viewBox="0 0 128 128" aria-hidden="true">
+          <defs>
+            <linearGradient id="app-mark-bg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2d4f96" />
+              <stop offset="1" stop-color="#14305e" />
+            </linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="28" fill="url(#app-mark-bg)" />
+          <path
+            d="M58 22 L66.5 51.5 L96 60 L66.5 68.5 L58 98 L49.5 68.5 L20 60 L49.5 51.5 Z"
+            fill="#fff"
+            opacity="0.97"
+          />
+          <path
+            d="M95 26 L98 36 L108 39 L98 42 L95 52 L92 42 L82 39 L92 36 Z"
+            fill="#fff"
+            opacity="0.85"
+          />
+        </svg>
+        <span id="app-name">Starry</span>
+        <button id="gear" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path
+              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+            />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+      </div>
+      <input
+        id="query"
+        type="search"
+        placeholder="Search your bookmarks…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div id="status" role="status"></div>
+      <div id="browse-controls" hidden>
+        <button
+          id="sort"
+          class="select-btn"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-label="Sort by"
+        >
+          <span class="select-label" id="sort-label">Recent</span>
+        </button>
+        <button
+          id="folder"
+          class="select-btn"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-label="Folder"
+        >
+          <span class="select-label folder-clip"
+            ><span class="folder-text" id="folder-label">All folders</span></span
+          >
+        </button>
+      </div>
+      <ul id="results" role="listbox"></ul>
+      <div id="footer"><span id="count"></span></div>
+    </div>
+    <div id="settings-view" hidden>
+      <div id="settings-header">
+        <span id="settings-title">Settings</span>
+        <button id="close" aria-label="Close settings">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M4 4l8 8M12 4l-8 8" />
+          </svg>
+        </button>
+      </div>
+      <div id="settings"></div>
+    </div>
+    <div id="setup-view" hidden>
+      <svg id="setup-mark" viewBox="0 0 128 128" aria-hidden="true">
+        <defs>
+          <linearGradient id="setup-mark-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2d4f96" />
+            <stop offset="1" stop-color="#14305e" />
+          </linearGradient>
+        </defs>
+        <rect width="128" height="128" rx="28" fill="url(#setup-mark-bg)" />
+        <path
+          d="M58 22 L66.5 51.5 L96 60 L66.5 68.5 L58 98 L49.5 68.5 L20 60 L49.5 51.5 Z"
+          fill="#fff"
+          opacity="0.97"
+        />
+        <path
+          d="M95 26 L98 36 L108 39 L98 42 L95 52 L92 42 L82 39 L92 36 Z"
+          fill="#fff"
+          opacity="0.85"
+        />
+      </svg>
+      <h1 id="setup-headline">Almost there</h1>
+      <p id="setup-sub">One quick step and every bookmark you own becomes searchable.</p>
+      <button id="setup-open" class="primary">Finish setup</button>
+    </div>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

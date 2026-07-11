@@ -1,0 +1,52 @@
+{
+  "comment": "Golden queries verified to have real targets in the dev corpus. expect = substring matched against result URLs (any-of). k = top-k window. minHitRate gates --strict runs. A gitignored tools/goldens.local.json (same shape) takes precedence when present — keep corpus-personal queries there.",
+  "minHitRate": 0.75,
+  "queries": [
+    {
+      "query": "ai chat",
+      "expect": ["chat.openai.com", "perplexity.ai", "openrouter.ai", "lmarena.ai"],
+      "k": 5,
+      "note": "corpus has ~224 AI bookmarks; lmarena (titled 'Free AI Chat') is a correct answer"
+    },
+    {
+      "query": "ai video editing",
+      "expect": ["opus.pro", "pictory.ai", "vidyo.ai", "steve.ai"],
+      "k": 5
+    },
+    { "query": "c unit testing framework", "expect": ["munit"], "k": 5 },
+    { "query": "multi agent framework", "expect": ["crewai.com", "microsoft/autogen"], "k": 5 },
+    { "query": "ai music generator", "expect": ["suno.ai", "aiva.ai", "musicfy"], "k": 5 },
+    { "query": "ai code editor", "expect": ["cursor.sh"], "k": 5 },
+    { "query": "movie recommendations from my letterboxd", "expect": ["letterboxd"], "k": 5 },
+    { "query": "bitcoin halving countdown", "expect": ["buybitcoinworldwide.com/halving"], "k": 3 },
+    { "query": "mental health for gamers", "expect": ["healthygamer.gg"], "k": 5 },
+    { "query": "hire virtual assistants philippines", "expect": ["onlinejobs.ph"], "k": 5 },
+    {
+      "query": "domain registrar",
+      "expect": ["porkbun.com", "namesilo.com", "namecheap.com", "gandi.net", "njal.la"],
+      "k": 5,
+      "note": "the corpus has five registrars; any of them is a correct answer"
+    },
+    { "query": "make text tables for discord", "expect": ["plaintexttools.github.io"], "k": 5 },
+    { "query": "invoice software for small business", "expect": ["waveapps.com"], "k": 5 },
+    { "query": "guide to building ai agents", "expect": ["mastra.ai"], "k": 5 },
+    {
+      "query": "gold prices",
+      "expect": ["merchants.to"],
+      "k": 10,
+      "note": "marketing title, topic only in meta description — must reach the first screen among ~20 literal-title RS gold sites (the ranking-v2 regression)"
+    },
+    {
+      "query": "osrs prices",
+      "expect": ["prices.runescape.wiki"],
+      "k": 3,
+      "note": "the wiki price DB is the objectively right hit; merchants.to says 'Runescape' never 'OSRS' — bridging that per-user is click-learning's job, not base rank"
+    },
+    {
+      "query": "compare runescape gold sellers",
+      "expect": ["merchants.to"],
+      "k": 5,
+      "note": "description-driven semantic+lexical: 'comparing prices, reviews… Runescape gold market'"
+    }
+  ]
+}

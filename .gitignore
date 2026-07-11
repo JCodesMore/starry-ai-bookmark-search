@@ -1,0 +1,10 @@
+.dev-profile/
+tools/screenshots/
+node_modules/
+
+.claude/session.local.md
+.claude/settings.local.json
+dist/
+release/
+.claude/session-log
+tools/goldens.local.json

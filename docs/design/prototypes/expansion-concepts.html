@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bookmark Semantic Search — expansion concepts</title>
+<style>
+/* ------------------------------------------------------------------ */
+/* Tokens — copied exactly from public/popup.css (light + dark).       */
+/* Page-chrome tokens (--page-*) are prototype scaffolding only.       */
+/* ------------------------------------------------------------------ */
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --hairline: rgba(0, 0, 0, 0.08);
+  --selection: rgba(0, 0, 0, 0.045);
+  --accent: #0071e3;
+  --chip-bg: rgba(0, 0, 0, 0.05);
+  --glass-grad: linear-gradient(165deg, rgba(255, 255, 255, 0.92), rgba(243, 243, 247, 0.78));
+  --glass-border: rgba(0, 0, 0, 0.07);
+  --glass-shadow: 0 8px 20px rgba(0, 0, 0, 0.13), 0 2px 5px rgba(0, 0, 0, 0.06);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --danger: #d70015;
+  --page-bg: #f5f5f7;
+  --page-text: #1d1d1f;
+  --page-muted: #86868b;
+  --page-hairline: rgba(0, 0, 0, 0.07);
+  --bar-bg: rgba(245, 245, 247, 0.88);
+  --mock-border: rgba(0, 0, 0, 0.06);
+  --mock-shadow: 0 16px 40px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+html[data-theme="dark"] {
+  --bg: #1c1c1e;
+  --text: #f5f5f7;
+  --muted: #98989d;
+  --hairline: rgba(255, 255, 255, 0.1);
+  --selection: rgba(255, 255, 255, 0.06);
+  --accent: #0a84ff;
+  --chip-bg: rgba(255, 255, 255, 0.08);
+  --glass-grad: linear-gradient(165deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 10px 24px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --danger: #ff453a;
+  --page-bg: #121214;
+  --page-text: #e8e8ea;
+  --page-muted: #8e8e93;
+  --page-hairline: rgba(255, 255, 255, 0.08);
+  --bar-bg: rgba(18, 18, 20, 0.88);
+  --mock-border: rgba(255, 255, 255, 0.07);
+  --mock-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --radius-row: 8px;
+  --radius-card: 14px;
+}
+
+* { box-sizing: border-box; }
+
+/* ------------------------------------------------------------------ */
+/* Page chrome — neutral and quiet; the mocks are the stars.           */
+/* ------------------------------------------------------------------ */
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--page-text);
+  font: 13px/1.45 system-ui, -apple-system, sans-serif;
+}
+
+header.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: var(--bar-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--page-hairline);
+}
+
+.bar-title { font-size: 12px; color: var(--page-muted); }
+
+#theme-toggle {
+  padding: 5px 14px;
+  font: 12px system-ui, -apple-system, sans-serif;
+  color: var(--page-text);
+  background: transparent;
+  border: 1px solid var(--page-hairline);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+#theme-toggle:hover { background: var(--page-hairline); }
+
+main {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 96px 32px 140px;
+}
+
+section {
+  padding: 60px 0 68px;
+  border-bottom: 1px solid var(--page-hairline);
+}
+
+section:last-of-type { border-bottom: none; }
+
+h2 { margin: 0; font-size: 15px; font-weight: 600; }
+
+h2 .n { color: var(--page-muted); font-weight: 500; }
+
+.rationale { margin: 6px 0 0; max-width: 640px; font-size: 13px; color: var(--page-muted); }
+
+.mocks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 44px;
+  margin-top: 32px;
+}
+
+.mock-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+.mock-label { font-size: 11px; letter-spacing: 0.02em; color: var(--page-muted); }
+
+.mock-note { margin: 0; max-width: 380px; font-size: 12px; color: var(--page-muted); }
+
+/* ------------------------------------------------------------------ */
+/* The popup frame — 380px, exactly the extension's look.              */
+/* ------------------------------------------------------------------ */
+.popup {
+  width: 380px;
+  padding: var(--space-3);
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.45 system-ui, -apple-system, sans-serif;
+  border: 1px solid var(--mock-border);
+  border-radius: 12px;
+  box-shadow: var(--mock-shadow);
+}
+
+.popup.tall {
+  min-height: 462px;
+  display: flex;
+  flex-direction: column;
+}
+
+.spacer { flex: 1; }
+
+/* Search input (visual replica; non-interactive) */
+.input {
+  padding: 9px var(--space-3);
+  font-size: 15px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+}
+
+.input .ph { color: var(--muted); }
+
+.input.focused { border-color: var(--accent); }
+
+.caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 15px;
+  margin-left: 1px;
+  vertical-align: -2px;
+  background: var(--text);
+  animation: blink 1.1s steps(2, start) infinite;
+}
+
+@keyframes blink { to { visibility: hidden; } }
+
+/* Slim popup header: app mark + wordmark left, one icon button right */
+.pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 24px;
+  margin-bottom: 10px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.mark { width: 16px; height: 16px; display: block; }
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.icon-btn:hover { background: var(--chip-bg); color: var(--text); }
+
+.icon-btn svg { width: 14px; height: 14px; display: block; }
+
+.icon { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Today's gear: bottom-right, low emphasis (matches shipped popup.css) */
+.foot-gear { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+
+.foot-gear .icon-btn { opacity: 0.55; }
+
+.foot-gear .icon-btn:hover { opacity: 1; }
+
+/* Browse controls row — quiet muted text, chip only on hover */
+.ctl-row { display: flex; justify-content: space-between; margin: var(--space-2) var(--space-1) 0; }
+
+.quiet-ctl {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  font-size: 11.5px;
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quiet-ctl:hover { background: var(--chip-bg); color: var(--text); }
+
+.quiet-ctl svg { width: 9px; height: 9px; }
+
+/* Result rows — macOS list rows: 7px vertical padding, radius 8 */
+.rows { margin-top: var(--space-2); }
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: 7px var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-row);
+}
+
+.row.selected { background: var(--selection); }
+
+.fav { flex: none; width: 16px; height: 16px; margin-top: 1.5px; }
+
+.fav rect { stroke: var(--hairline); }
+
+.fav text {
+  font: 700 9px/1 system-ui, -apple-system, sans-serif;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.row .main { flex: 1; min-width: 0; }
+
+.row .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row .meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.chip {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 9px;
+  background: var(--chip-bg);
+  font-size: 10.5px;
+}
+
+/* Popup footer — hairline above, two quiet facts */
+.pop-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-1) 0;
+  border-top: 1px solid var(--hairline);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Liquid-glass detail card (real --glass-* tokens, radius 14)         */
+/* ------------------------------------------------------------------ */
+.row.expanded {
+  display: block;
+  margin: 0 0 8px;
+  padding: 8px 9px 10px;
+  background: var(--glass-grad);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+.row.expanded .row-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.row.expanded .title {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.card-actions { display: flex; gap: var(--space-1); margin: -2px -4px 0 0; }
+
+.card-actions .icon-btn { width: 22px; height: 22px; }
+
+.card-actions svg { width: 13px; height: 13px; }
+
+.detail-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin: 6px 0 0 24px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.detail-url {
+  margin: 6px 0 0 24px;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.detail-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 7px 0 1px 24px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.detail-folder { display: inline-flex; align-items: center; gap: 4px; }
+
+.detail-folder svg { flex: none; width: 11px; height: 11px; stroke-width: 1.2; opacity: 0.8; }
+
+/* Toast — a dark pill in both themes, like a system HUD */
+.toast-lane { margin-top: var(--space-4); text-align: center; }
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 14px;
+  background: #2c2c2e;
+  color: #f5f5f7;
+  font-size: 12px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.toast .sep { color: #98989d; }
+
+.toast .undo {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: #0a84ff;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/* Settings screen                                                     */
+/* ------------------------------------------------------------------ */
+.settings-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.head-left { display: flex; align-items: center; gap: var(--space-1); }
+
+.head-left .icon-btn { margin-left: -5px; }
+
+.settings { margin-top: var(--space-2); }
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.settings-row:last-child { border-bottom: none; }
+
+.settings-label { min-width: 0; }
+
+.settings-label .name { display: block; }
+
+.settings-label .desc { display: block; font-size: 11.5px; color: var(--muted); }
+
+.settings-btn {
+  flex: none;
+  padding: 5px 12px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--chip-bg);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.settings-btn:hover { background: var(--selection); }
+
+.settings-btn.danger { color: var(--danger); }
+
+/* Annotation marker — prototype-only, never part of the product UI */
+.annot-anchor { position: relative; display: inline-grid; }
+
+.annot-ring {
+  position: absolute;
+  inset: -5px;
+  border: 1px dashed color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.annot-label {
+  margin: 4px 0 2px;
+  font-size: 10px;
+  text-align: right;
+  color: color-mix(in srgb, var(--accent) 70%, var(--muted));
+}
+
+/* ------------------------------------------------------------------ */
+/* First-run tab cards (~460px — a browser tab, not the popup)         */
+/* ------------------------------------------------------------------ */
+.tabcard {
+  width: 460px;
+  min-height: 424px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 40px 28px;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.45 system-ui, -apple-system, sans-serif;
+  text-align: center;
+  border: 1px solid var(--mock-border);
+  border-radius: 12px;
+  box-shadow: var(--mock-shadow);
+}
+
+.tabcard .mark-lg { width: 40px; height: 40px; }
+
+.tabcard h3 {
+  margin: var(--space-4) 0 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.tabcard .copy {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.btn-primary {
+  margin-top: 24px;
+  padding: 8px 18px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-primary:hover { filter: brightness(1.08); }
+
+.link-quiet {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link-quiet:hover { text-decoration: underline; }
+
+.progress-note { width: 100%; margin-top: auto; padding-top: 28px; }
+
+.progress-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  overflow: hidden;
+}
+
+.progress-fill { width: 34%; height: 100%; border-radius: 999px; background: var(--accent); }
+
+.progress-text { margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+
+/* Folder checklist + toggle (customize path) */
+.checklist { width: 300px; margin-top: 20px; text-align: left; }
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 13px;
+}
+
+.check-row .count { color: var(--muted); }
+
+.cb {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.cb.on {
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.cb.on svg { width: 11px; height: 11px; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: 9px 0 2px;
+  border-top: 1px solid var(--hairline);
+  font-size: 13px;
+}
+
+.switch {
+  flex: none;
+  position: relative;
+  width: 30px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ------------------------------------------------------------------ */
+/* Omnibox mock (~560px)                                               */
+/* ------------------------------------------------------------------ */
+.omni {
+  width: 560px;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.45 system-ui, -apple-system, sans-serif;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  box-shadow: var(--mock-shadow);
+  overflow: hidden;
+}
+
+.omni-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.kw-pill {
+  flex: none;
+  padding: 3px 9px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--chip-bg);
+  border-radius: 6px;
+}
+
+.omni-drop { border-top: 1px solid var(--hairline); padding: 5px; }
+
+.o-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-row);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.o-row.selected { background: var(--selection); }
+
+.o-row .o-t { overflow: hidden; text-overflow: ellipsis; }
+
+.o-row .o-d { flex: none; font-size: 11.5px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .caret { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-title">Bookmark Semantic Search — expansion concepts</div>
+  <button id="theme-toggle" type="button">Light</button>
+</header>
+
+<main>
+
+<!-- ============================================================ 1 -->
+<section>
+  <h2><span class="n">1 ·</span> Home at rest</h2>
+  <p class="rationale">What greets you before a single keystroke — today's empty room versus a quiet shelf of what you saved last.</p>
+  <div class="mocks">
+
+    <div class="mock-wrap">
+      <div class="popup tall">
+        <div class="input"><span class="ph">Search your bookmarks…</span></div>
+        <div class="spacer"></div>
+        <div class="foot-gear">
+          <button class="icon-btn" type="button" aria-label="Settings">
+            <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="1.7"/><circle cx="8" cy="8" r="4.4"/><path d="M8 1.4v2.2M8 12.4v2.2M1.4 8h2.2M12.4 8h2.2M3.3 3.3l1.6 1.6M11.1 11.1l1.6 1.6M12.7 3.3l-1.6 1.6M4.9 11.1l-1.6 1.6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="mock-label">Today</div>
+    </div>
+
+    <div class="mock-wrap">
+      <div class="popup tall">
+        <div class="pop-head">
+          <div class="brand">
+            <svg class="mark" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3.5" fill="var(--accent)"/><path d="M5.3 3.8h5.4v8.4L8 10.1l-2.7 2.1z" fill="#fff"/></svg>
+            Bookmarks
+          </div>
+          <button class="icon-btn" type="button" aria-label="Settings">
+            <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="1.7"/><circle cx="8" cy="8" r="4.4"/><path d="M8 1.4v2.2M8 12.4v2.2M1.4 8h2.2M12.4 8h2.2M3.3 3.3l1.6 1.6M11.1 11.1l1.6 1.6M12.7 3.3l-1.6 1.6M4.9 11.1l-1.6 1.6"/></svg>
+          </button>
+        </div>
+        <div class="input"><span class="ph">Search your bookmarks…</span></div>
+        <div class="ctl-row">
+          <span class="quiet-ctl">Recent <svg class="icon" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 4 5 6.5 7.5 4" stroke-width="1.3"/></svg></span>
+          <span class="quiet-ctl">All folders <svg class="icon" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 4 5 6.5 7.5 4" stroke-width="1.3"/></svg></span>
+        </div>
+        <div class="rows">
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#0d9488"/><text x="8" y="8.75">W</text></svg>
+            <div class="main">
+              <div class="title">Warmr Documentation — getting started</div>
+              <div class="meta">docs.warmr.so · 2d ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#ff0000"/><text x="8" y="8.75">Y</text></svg>
+            <div class="main">
+              <div class="title">Studying Music, Deep Focus Music with Binaural Beats</div>
+              <div class="meta">youtube.com · 5d ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#ff4500"/><text x="8" y="8.75">R</text></svg>
+            <div class="main">
+              <div class="title">The Mega List for Finding Online Work : r/WorkOnline</div>
+              <div class="meta">reddit.com · 1w ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#15171c"/><text x="8" y="8.75" style="fill:#a3e635">T</text></svg>
+            <div class="main">
+              <div class="title">Trigger.dev | Build and deploy fully-managed background jobs</div>
+              <div class="meta">trigger.dev · 2w ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#000000"/><text x="8" y="8.75">X</text></svg>
+            <div class="main">
+              <div class="title">Dev Updates (@devupdates) / X</div>
+              <div class="meta">x.com · 3w ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#ff0000"/><text x="8" y="8.75">Y</text></svg>
+            <div class="main">
+              <div class="title">How Sailing Gameplay Works | Sailing Part 3</div>
+              <div class="meta">youtube.com · 1mo ago</div>
+            </div>
+          </div>
+        </div>
+        <div class="pop-foot"><span>1,342 bookmarks</span><span>local</span></div>
+      </div>
+      <div class="mock-label">Proposed</div>
+      <p class="mock-note">Browse-at-rest: recency costs zero keystrokes.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ 2 -->
+<section>
+  <h2><span class="n">2 ·</span> Typing</h2>
+  <p class="rationale">The moment you type, browsing ends — the sort and folder controls step aside and ranking owns the order.</p>
+  <div class="mocks">
+
+    <div class="mock-wrap">
+      <div class="popup">
+        <div class="pop-head">
+          <div class="brand">
+            <svg class="mark" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3.5" fill="var(--accent)"/><path d="M5.3 3.8h5.4v8.4L8 10.1l-2.7 2.1z" fill="#fff"/></svg>
+            Bookmarks
+          </div>
+          <button class="icon-btn" type="button" aria-label="Settings">
+            <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="1.7"/><circle cx="8" cy="8" r="4.4"/><path d="M8 1.4v2.2M8 12.4v2.2M1.4 8h2.2M12.4 8h2.2M3.3 3.3l1.6 1.6M11.1 11.1l1.6 1.6M12.7 3.3l-1.6 1.6M4.9 11.1l-1.6 1.6"/></svg>
+          </button>
+        </div>
+        <div class="input focused">warmup<span class="caret"></span></div>
+        <div class="rows">
+          <div class="row selected">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#0d9488"/><text x="8" y="8.75">W</text></svg>
+            <div class="main">
+              <div class="title">Warmr Documentation — getting started</div>
+              <div class="meta"><span class="chip">related</span>docs.warmr.so · 2d ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#2f6fe0"/><text x="8" y="8.75">M</text></svg>
+            <div class="main">
+              <div class="title">Email warm-up, explained — a deliverability guide</div>
+              <div class="meta">mailmodo.com · 3w ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#ff4500"/><text x="8" y="8.75">R</text></svg>
+            <div class="main">
+              <div class="title">Warming up a new iPhone eSIM before travel : r/eSIM</div>
+              <div class="meta">reddit.com · 1mo ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#ff0000"/><text x="8" y="8.75">Y</text></svg>
+            <div class="main">
+              <div class="title">10-minute vocal warm-up for long recording days</div>
+              <div class="meta">youtube.com · 2mo ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#24292f"/><text x="8" y="8.75">G</text></svg>
+            <div class="main">
+              <div class="title">warmup-scheduler: learning-rate warm-up for PyTorch</div>
+              <div class="meta">github.com · 3mo ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#000000"/><text x="8" y="8.75">V</text></svg>
+            <div class="main">
+              <div class="title">Why cold starts hurt — warming serverless functions</div>
+              <div class="meta">vercel.com · 4mo ago</div>
+            </div>
+          </div>
+        </div>
+        <div class="pop-foot"><span>1,342 bookmarks</span><span>local</span></div>
+      </div>
+      <div class="mock-label">Proposed — query &#8220;warmup&#8221;</div>
+      <p class="mock-note">Browse controls are browse-only; once you type, ranking owns the order.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ 3 -->
+<section>
+  <h2><span class="n">3 ·</span> Settings exit</h2>
+  <p class="rationale">Two ways to leave settings — the exit should sit exactly where the entrance was.</p>
+  <div class="mocks">
+
+    <div class="mock-wrap">
+      <div class="popup" style="min-height:190px">
+        <div class="pop-head">
+          <div class="head-left">
+            <button class="icon-btn" type="button" aria-label="Back">
+              <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 3.5 5 8l4.5 4.5"/></svg>
+            </button>
+            <span class="settings-title">Settings</span>
+          </div>
+        </div>
+        <div class="settings">
+          <div class="settings-row">
+            <div class="settings-label">
+              <span class="name">Rebuild index</span>
+              <span class="desc">Refresh all bookmarks in the search index</span>
+            </div>
+            <button class="settings-btn" type="button">Re-index</button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <span class="name">Reset data</span>
+              <span class="desc">Erase the local index and rebuild from scratch</span>
+            </div>
+            <button class="settings-btn danger" type="button">Reset…</button>
+          </div>
+        </div>
+      </div>
+      <div class="mock-label">Built today</div>
+    </div>
+
+    <div class="mock-wrap">
+      <div class="popup" style="min-height:190px">
+        <div class="pop-head">
+          <span class="settings-title">Settings</span>
+          <span class="annot-anchor">
+            <span class="annot-ring"></span>
+            <button class="icon-btn" type="button" aria-label="Close settings">
+              <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+          </span>
+        </div>
+        <div class="annot-label">same spot as the gear — zero pointer travel</div>
+        <div class="settings">
+          <div class="settings-row">
+            <div class="settings-label">
+              <span class="name">Rebuild index</span>
+              <span class="desc">Refresh all bookmarks in the search index</span>
+            </div>
+            <button class="settings-btn" type="button">Re-index</button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <span class="name">Reset data</span>
+              <span class="desc">Erase the local index and rebuild from scratch</span>
+            </div>
+            <button class="settings-btn danger" type="button">Reset…</button>
+          </div>
+        </div>
+      </div>
+      <div class="mock-label">Recommended</div>
+      <p class="mock-note">Open with the gear, close in the same spot. Esc still works.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ 4 -->
+<section>
+  <h2><span class="n">4 ·</span> Detail card + management</h2>
+  <p class="rationale">Management lives inside the detail card, gated by the same dwell that reveals it — no extra chrome on resting rows.</p>
+  <div class="mocks">
+
+    <div class="mock-wrap">
+      <div class="popup">
+        <div class="pop-head">
+          <div class="brand">
+            <svg class="mark" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3.5" fill="var(--accent)"/><path d="M5.3 3.8h5.4v8.4L8 10.1l-2.7 2.1z" fill="#fff"/></svg>
+            Bookmarks
+          </div>
+          <button class="icon-btn" type="button" aria-label="Settings">
+            <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="1.7"/><circle cx="8" cy="8" r="4.4"/><path d="M8 1.4v2.2M8 12.4v2.2M1.4 8h2.2M12.4 8h2.2M3.3 3.3l1.6 1.6M11.1 11.1l1.6 1.6M12.7 3.3l-1.6 1.6M4.9 11.1l-1.6 1.6"/></svg>
+          </button>
+        </div>
+        <div class="input focused">backup<span class="caret"></span></div>
+        <div class="rows">
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#d2202f"/><text x="8" y="8.75">B</text></svg>
+            <div class="main">
+              <div class="title">Backblaze — two years of cloud backup, reviewed</div>
+              <div class="meta">backblaze.com · 3w ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#24292f"/><text x="8" y="8.75">G</text></svg>
+            <div class="main">
+              <div class="title">restic/restic: Fast, secure, efficient backup program</div>
+              <div class="meta">github.com · 1mo ago</div>
+            </div>
+          </div>
+          <div class="row expanded">
+            <div class="row-head">
+              <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#1f5fae"/><text x="8" y="8.75">M</text></svg>
+              <div class="main">
+                <div class="title">Macrium Software | Backup, Disk Imaging and Cloning for Personal and Business Use</div>
+              </div>
+              <div class="card-actions">
+                <button class="icon-btn" type="button" aria-label="Open in new tab">
+                  <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.8 3.8H4.2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V9.2M9.5 3H13v3.5M12.8 3.2 7.6 8.4"/></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Copy link">
+                  <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.6" y="5.6" width="7" height="7" rx="1.4"/><path d="M10.4 3.4H4.4a1 1 0 0 0-1 1v6"/></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Remove bookmark">
+                  <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.8 4.3h10.4M6.3 4.3V3.2a.9.9 0 0 1 .9-.9h1.6a.9.9 0 0 1 .9.9v1.1M4.3 4.3l.6 8.2a1.2 1.2 0 0 0 1.2 1.1h3.8a1.2 1.2 0 0 0 1.2-1.1l.6-8.2M6.6 7v3.8M9.4 7v3.8"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="detail-desc">Create full disk images of your PC, restore to new hardware, and schedule incremental backups. Trusted imaging and cloning for home and business machines.</div>
+            <div class="detail-url">https://www.macrium.com/products/home-and-business</div>
+            <div class="detail-foot">
+              <span class="detail-folder">
+                <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.8 4.6c0-.6.4-1 1-1h3.1l1.5 1.5h6c.6 0 1 .4 1 1v6c0 .6-.4 1-1 1H2.8c-.6 0-1-.4-1-1z"/></svg>
+                Other bookmarks / Imported bookmarks / Bookmarks bar
+              </span>
+              <span>Added Jul 2026</span>
+              <span class="chip">automation-tools</span>
+              <span class="chip">cloud-hosting</span>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#ff4500"/><text x="8" y="8.75">R</text></svg>
+            <div class="main">
+              <div class="title">How do you image a Windows drive? : r/DataHoarder</div>
+              <div class="meta">reddit.com · 2mo ago</div>
+            </div>
+          </div>
+          <div class="row">
+            <svg class="fav" viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" fill="#0b8ac2"/><text x="8" y="8.75">S</text></svg>
+            <div class="main">
+              <div class="title">Syncthing — continuous file synchronization</div>
+              <div class="meta">syncthing.net · 4mo ago</div>
+            </div>
+          </div>
+        </div>
+        <div class="pop-foot"><span>1,342 bookmarks</span><span>local</span></div>
+      </div>
+
+      <div class="toast-lane">
+        <div class="toast">Removed &#8220;Macrium Software | Backup PC&#8221; <span class="sep">·</span> <button class="undo" type="button">Undo</button></div>
+      </div>
+
+      <div class="mock-label">Proposed — third row dwelled open</div>
+      <p class="mock-note">Remove lives in the card (intent-gated), always with Undo. &#8220;Reveal in Bookmarks Manager&#8221; rides in the same row.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ 5 -->
+<section>
+  <h2><span class="n">5 ·</span> First-run: index everything, or customize</h2>
+  <p class="rationale">First run asks one question at most — the default path is a single click, and customizing stays one quiet link away.</p>
+  <div class="mocks">
+
+    <div class="mock-wrap">
+      <div class="tabcard">
+        <svg class="mark-lg" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3.5" fill="var(--accent)"/><path d="M5.3 3.8h5.4v8.4L8 10.1l-2.7 2.1z" fill="#fff"/></svg>
+        <h3>Search your bookmarks by meaning</h3>
+        <p class="copy">Everything is indexed on this device. Nothing leaves your computer.</p>
+        <button class="btn-primary" type="button">Index all 1,342 bookmarks</button>
+        <span class="link-quiet">Customize…</span>
+        <div class="progress-note">
+          <div class="progress-track"><div class="progress-fill"></div></div>
+          <div class="progress-text">Preparing search… 34%</div>
+        </div>
+      </div>
+      <div class="mock-label">Default path</div>
+    </div>
+
+    <div class="mock-wrap">
+      <div class="tabcard">
+        <svg class="mark-lg" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3.5" fill="var(--accent)"/><path d="M5.3 3.8h5.4v8.4L8 10.1l-2.7 2.1z" fill="#fff"/></svg>
+        <h3>Search your bookmarks by meaning</h3>
+        <div class="checklist">
+          <div class="check-row">
+            <span class="cb on"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.5 5 9l4.5-5.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Bookmarks bar <span class="count">(114)</span>
+          </div>
+          <div class="check-row">
+            <span class="cb on"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.5 5 9l4.5-5.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Imported bookmarks <span class="count">(1,204)</span>
+          </div>
+          <div class="check-row">
+            <span class="cb on"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.5 5 9l4.5-5.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Work <span class="count">(16)</span>
+          </div>
+          <div class="check-row">
+            <span class="cb"></span>
+            Private stuff <span class="count">(8)</span>
+          </div>
+          <div class="toggle-row">
+            Read page content for better results
+            <span class="switch"></span>
+          </div>
+        </div>
+        <button class="btn-primary" type="button">Start indexing</button>
+      </div>
+      <div class="mock-label">Customize</div>
+      <p class="mock-note" style="max-width:460px">Titles index instantly either way; the choice governs page reading and exclusions.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ 6 -->
+<section>
+  <h2><span class="n">6 ·</span> Omnibox keyword</h2>
+  <p class="rationale">Search from the address bar with a keyword — no popup, no new tab, results where your cursor already is.</p>
+  <div class="mocks">
+
+    <div class="mock-wrap">
+      <div class="omni">
+        <div class="omni-bar">
+          <span class="kw-pill">Bookmarks</span>
+          <span>warmup iphone ai</span><span class="caret"></span>
+        </div>
+        <div class="omni-drop">
+          <div class="o-row selected">
+            <span class="o-t">Warmr Documentation — Warmr</span>
+            <span class="o-d">| docs.warmr.so</span>
+          </div>
+          <div class="o-row">
+            <span class="o-t">Warm up new iPhone eSIM — guide</span>
+            <span class="o-d">| reddit.com</span>
+          </div>
+          <div class="o-row">
+            <span class="o-t">AI phone warmup tools compared</span>
+            <span class="o-d">| example.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="mock-label">Proposed</div>
+      <p class="mock-note" style="max-width:560px">Type the keyword + Tab in the address bar — search without opening anything.</p>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<script>
+  const root = document.documentElement;
+  const toggle = document.getElementById("theme-toggle");
+  const relabel = () => {
+    toggle.textContent = root.dataset.theme === "dark" ? "Light" : "Dark";
+  };
+  toggle.addEventListener("click", () => {
+    root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+    relabel();
+  });
+  relabel();
+</script>
+
+</body>
+</html>

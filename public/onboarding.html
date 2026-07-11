@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Starry</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="onboarding.css" />
+  </head>
+  <body>
+    <main id="card">
+      <svg id="mark" viewBox="0 0 128 128" aria-hidden="true">
+        <defs>
+          <linearGradient id="mark-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2d4f96" />
+            <stop offset="1" stop-color="#14305e" />
+          </linearGradient>
+        </defs>
+        <rect width="128" height="128" rx="28" fill="url(#mark-bg)" />
+        <path
+          d="M58 22 L66.5 51.5 L96 60 L66.5 68.5 L58 98 L49.5 68.5 L20 60 L49.5 51.5 Z"
+          fill="#fff"
+          opacity="0.97"
+        />
+        <path
+          d="M95 26 L98 36 L108 39 L98 42 L95 52 L92 42 L82 39 L92 36 Z"
+          fill="#fff"
+          opacity="0.85"
+        />
+      </svg>
+      <h1 id="headline">The easiest way to find your bookmarks</h1>
+      <p id="sub">Find your bookmarks like a simple Google search. It just works.</p>
+
+      <div id="hero-actions">
+        <button id="start" class="primary">Get started</button>
+      </div>
+      <p id="foot">Free · Private · Local</p>
+
+      <section id="chooser" hidden>
+        <div id="folder-list" role="group" aria-label="Folders to include"></div>
+        <label id="crawl-row">
+          <input type="checkbox" id="crawl" checked />
+          <span class="crawl-text">
+            <span class="crawl-name">Read page content for better results</span>
+            <span class="crawl-desc"
+              >Visits your bookmarked pages in the background so searches can match what a page is
+              about, not just its name.</span
+            >
+          </span>
+        </label>
+        <button id="begin" class="primary">Start learning</button>
+      </section>
+
+      <div id="learn-bar" hidden><div id="learn-fill"></div></div>
+      <p id="progress" role="status" hidden></p>
+      <div id="ticker" hidden aria-hidden="true">
+        <img id="ticker-icon" alt="" />
+        <span id="ticker-text"></span>
+      </div>
+      <button id="try-now" class="primary" hidden>Try it now</button>
+
+      <section id="pin-card" hidden>
+        <svg id="pin-steps" viewBox="0 0 230 86" aria-hidden="true">
+          <defs>
+            <linearGradient id="pin-mark-bg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2d4f96" />
+              <stop offset="1" stop-color="#14305e" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="8" width="222" height="28" rx="14" fill="var(--chip-bg)" />
+          <rect x="18" y="19" width="70" height="6" rx="3" fill="var(--hairline)" />
+          <g transform="translate(176 12) scale(0.83)">
+            <path
+              d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"
+              fill="var(--muted)"
+            />
+          </g>
+          <circle cx="202" cy="12" r="8" fill="var(--accent)" />
+          <text x="202" y="15.4" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">
+            1
+          </text>
+          <rect
+            x="92"
+            y="46"
+            width="134"
+            height="32"
+            rx="10"
+            fill="var(--bg)"
+            stroke="var(--hairline)"
+          />
+          <g transform="translate(102 54) scale(0.125)">
+            <rect width="128" height="128" rx="28" fill="url(#pin-mark-bg)" />
+            <path
+              d="M58 22 L66.5 51.5 L96 60 L66.5 68.5 L58 98 L49.5 68.5 L20 60 L49.5 51.5 Z"
+              fill="#fff"
+              opacity="0.97"
+            />
+            <path
+              d="M95 26 L98 36 L108 39 L98 42 L95 52 L92 42 L82 39 L92 36 Z"
+              fill="#fff"
+              opacity="0.85"
+            />
+          </g>
+          <rect x="126" y="59" width="50" height="6" rx="3" fill="var(--hairline)" />
+          <g transform="translate(186 54) scale(0.7)">
+            <path
+              d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"
+              fill="var(--muted)"
+            />
+          </g>
+          <circle cx="214" cy="52" r="8" fill="var(--accent)" />
+          <text x="214" y="55.4" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">
+            2
+          </text>
+        </svg>
+        <svg id="pin-done" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="11" fill="var(--accent)" />
+          <path
+            d="M7 12.5l3.2 3.2L17 9"
+            fill="none"
+            stroke="#fff"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <div class="pin-text">
+          <span id="pin-title">While I work, pin me to your toolbar</span>
+          <span id="pin-desc"
+            >Click the puzzle piece next to the address bar, then the pin beside “Starry.”</span
+          >
+        </div>
+      </section>
+    </main>
+    <script type="module" src="onboarding.js"></script>
+  </body>
+</html>

@@ -1,0 +1,466 @@
+/* Onboarding page: one centered card, the popup's design language at page
+   scale. Progressive disclosure — one act on stage at a time: hero → chooser
+   → learning progress (+ pin-me card) → all set. */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Author display rules (e.g. flex) must never beat the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#card {
+  width: min(460px, calc(100vw - 2 * var(--space-4)));
+  padding: 48px var(--space-4) var(--space-4);
+  text-align: center;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The hero enters as a soft cascade: mark settles first, each line follows. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+#mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  box-shadow: var(--glass-shadow);
+  animation: mark-in 620ms var(--spring) both;
+}
+
+h1 {
+  animation: rise-in 560ms var(--settle) 90ms both;
+}
+
+#sub {
+  animation: rise-in 560ms var(--settle) 170ms both;
+}
+
+#hero-actions {
+  animation: rise-in 560ms var(--settle) 250ms both;
+}
+
+#foot {
+  animation: rise-in 560ms var(--settle) 330ms both;
+}
+
+h1 {
+  margin: 28px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* Later stages reuse h1/#sub — the entrance cascade belongs to page load only,
+   `both` keeps the settled state after it plays. */
+
+#sub {
+  margin: var(--space-3) auto 0;
+  max-width: 40ch;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+#hero-actions {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+.primary {
+  padding: 10px 28px;
+  border-radius: 980px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  transition:
+    filter var(--motion),
+    transform var(--motion);
+}
+
+.primary:hover {
+  filter: brightness(1.08);
+}
+
+.primary:active {
+  transform: scale(0.97);
+}
+
+.primary:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* --- the chooser (folder checklist + crawl consent) --- */
+
+#chooser {
+  margin-top: 28px;
+  text-align: left;
+  animation: card-in 320ms var(--settle) both;
+}
+
+#folder-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  padding: var(--space-1);
+}
+
+#folder-list:empty {
+  display: none;
+}
+
+.folder-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-row);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background var(--motion);
+}
+
+.folder-row:hover {
+  background: var(--selection);
+}
+
+.folder-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-count {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Brand-new profile: the folder list has nothing to offer — one calm line. */
+.empty-note {
+  margin: var(--space-2) 0;
+  padding: var(--space-3);
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+#crawl-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  transition: background var(--motion);
+}
+
+#crawl-row:hover {
+  background: var(--selection);
+}
+
+#crawl-row input,
+.folder-row input {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  margin: 2px 0 0;
+  flex: none;
+  cursor: pointer;
+}
+
+.crawl-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.crawl-name {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.crawl-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+#begin {
+  display: block;
+  margin: var(--space-4) auto 0;
+}
+
+/* --- the learning show: progress bar + "now reading" ticker --- */
+
+#learn-bar {
+  position: relative;
+  width: min(320px, 100%);
+  height: 6px;
+  margin: 32px auto 0;
+  border-radius: 999px;
+  background: var(--hairline);
+  overflow: hidden;
+}
+
+#learn-fill {
+  position: relative;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 700ms var(--settle);
+  overflow: hidden;
+}
+
+/* A soft light sweep across the fill — "working", not just "parked". */
+#learn-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-100%);
+  animation: bar-sheen 1.8s ease-in-out infinite;
+}
+
+@keyframes bar-sheen {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Amount unknown (reading the library, warming the model): a gliding segment. */
+#learn-bar.indeterminate #learn-fill {
+  width: 40%;
+  transition: none;
+  animation: bar-glide 1.3s ease-in-out infinite alternate;
+}
+
+@keyframes bar-glide {
+  from {
+    transform: translateX(-40%);
+  }
+  to {
+    transform: translateX(190%);
+  }
+}
+
+#ticker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 46ch;
+  margin: var(--space-3) auto 0;
+  min-height: 20px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+#ticker img {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+#ticker span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Each bookmark files in from below — the library visibly streaming past. */
+#ticker.swap {
+  animation: file-in 460ms var(--settle) both;
+}
+
+@keyframes file-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #learn-fill {
+    transition: none;
+  }
+
+  #learn-fill::after,
+  #learn-bar.indeterminate #learn-fill,
+  #ticker.swap,
+  #mark,
+  h1,
+  #sub,
+  #hero-actions,
+  #foot {
+    animation: none;
+  }
+
+  /* Indeterminate still needs to read as "working" without motion. */
+  #learn-bar.indeterminate #learn-fill {
+    width: 100%;
+    opacity: 0.35;
+    transform: none;
+  }
+}
+
+/* --- progress + microcopy --- */
+
+#progress {
+  margin: 28px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tighter under the bar — the pair reads as one unit while learning. */
+#learn-bar:not([hidden]) + #progress {
+  margin-top: var(--space-3);
+}
+
+#try-now {
+  margin-top: 24px;
+}
+
+/* --- the pin-me card: teach the two steps, celebrate the moment it lands --- */
+
+#pin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 360px;
+  margin: 32px auto 0;
+  padding: var(--space-4);
+  text-align: center;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  animation: card-in 320ms var(--settle) both;
+  transition: border-color var(--motion);
+}
+
+#pin-steps {
+  width: 230px;
+  flex: none;
+}
+
+#pin-done {
+  display: none;
+  width: 34px;
+  flex: none;
+}
+
+#pin-card.pinned {
+  border-color: var(--accent);
+}
+
+#pin-card.pinned #pin-steps {
+  display: none;
+}
+
+#pin-card.pinned #pin-done {
+  display: block;
+  animation: pin-pop 420ms var(--spring) both;
+}
+
+@keyframes pin-pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.pin-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+#pin-title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+#pin-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+#foot {
+  margin: 22px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}

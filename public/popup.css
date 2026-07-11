@@ -1,0 +1,977 @@
+/* Visual tokens live in tokens.css (shared with onboarding) — popup.html
+   links it first, so everything below can assume the variables exist. */
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-url-text.marquee {
+    animation: none;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--bg);
+  color: var(--text);
+  font:
+    13px/1.45 system-ui,
+    -apple-system,
+    sans-serif;
+  /* All scrolling lives inside #results — never on the popup document itself
+     (stray document scrollbars are the classic "cheap extension" tell). */
+  overflow: hidden;
+}
+
+#query {
+  width: 100%;
+  padding: 9px var(--space-3);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color var(--motion);
+}
+
+#query::placeholder {
+  color: var(--muted);
+}
+
+/* The native search-cancel glyph is loud and unstyleable; Esc clears instead. */
+#query::-webkit-search-cancel-button {
+  display: none;
+}
+
+#query:focus {
+  border-color: var(--accent);
+}
+
+/* Quiet one-line status; only present while indexing/downloading (rule 6). */
+#status {
+  margin: var(--space-2) var(--space-1) 0;
+  font-size: 11.5px;
+  color: var(--muted);
+  transition: opacity var(--motion);
+}
+
+#status:empty {
+  display: none;
+}
+
+/* Browse-only controls: two quiet text selects, gone the moment you type
+   (ranking owns the order then). Left: sort. Right: folder scope. */
+#browse-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: var(--space-2) var(--space-1) 0;
+}
+
+#browse-controls[hidden] {
+  display: none;
+}
+
+/* A quiet text trigger + chevron; clicking opens the styled option panel
+   (.overlay-menu.dropdown) instead of a native select menu. */
+.select-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.select-label {
+  min-width: 0;
+  max-width: 176px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: var(--muted);
+  transition: color var(--motion);
+}
+
+.select-btn::after {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  background: var(--muted);
+  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path d="M1 2.5 4 5.5 7 2.5" fill="none" stroke="black" stroke-width="1.4"/></svg>')
+    center / contain no-repeat;
+  transition:
+    background var(--motion),
+    transform var(--motion);
+}
+
+.select-btn:hover .select-label,
+.select-btn[aria-expanded='true'] .select-label {
+  color: var(--text);
+}
+
+.select-btn:hover::after,
+.select-btn[aria-expanded='true']::after {
+  background: var(--text);
+}
+
+.select-btn[aria-expanded='true']::after {
+  transform: rotate(180deg);
+}
+
+.select-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+#results {
+  list-style: none;
+  /* Negative side margins + matching padding: rows keep the input's width while
+     the expanded card's shadow gets room to breathe inside the scroll clip. */
+  margin: var(--space-2) calc(-1 * var(--space-2)) 0;
+  padding: 0 var(--space-2);
+  max-height: 420px;
+  /* Sideways scrolling is never meaningful here — overflow-y:auto alone would
+     compute overflow-x to auto and let any stray box summon a horizontal
+     scrollbar (the classic cheap-extension tell). */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+
+#results::-webkit-scrollbar {
+  width: 6px;
+}
+
+#results::-webkit-scrollbar-thumb {
+  background: var(--hairline);
+  border-radius: 3px;
+}
+
+#results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#results:empty {
+  margin: 0;
+}
+
+.row {
+  /* Containing block for the date tooltip — it must escape .details-inner's
+     overflow clip, so nothing between here and the tooltip may be positioned. */
+  position: relative;
+  padding: 7px var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-row);
+  cursor: pointer;
+  transition:
+    background var(--motion),
+    border-color var(--motion),
+    border-radius var(--motion),
+    box-shadow var(--collapse-dur) var(--settle),
+    margin var(--collapse-dur) var(--settle);
+}
+
+.row.selected {
+  background: var(--selection);
+}
+
+/* The bloomed bubble — liquid glass: translucent gradient, specular top edge,
+   soft lift, wider radius, breathing room. Growth is strictly DOWNWARD: no top
+   margin (the row's head must not shift under the pointer — a moving hover
+   target oscillates), no width change (text must not re-wrap mid-animation). */
+.row.expanded {
+  margin: 0 0 8px;
+  background: var(--glass-grad);
+  border-color: var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+  transition:
+    background var(--motion),
+    border-color var(--motion),
+    border-radius var(--motion),
+    box-shadow var(--expand-dur) var(--settle),
+    margin var(--expand-dur) var(--spring);
+}
+
+.row-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.row .favicon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 1.5px; /* optically centered on the title's first line */
+  border-radius: 2px;
+}
+
+.row .main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Collapsed: one clipped line with a right-edge fade as the truncation cue
+   (an ellipsis can't survive the bloom — the same laid-out text just gets
+   revealed by the growing max-height). Expanded: up to 3 lines. */
+.row .title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  max-height: var(--title-line-h);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  transition: max-height var(--collapse-dur) var(--settle);
+}
+
+.row.expanded .title {
+  max-height: calc(3 * var(--title-line-h));
+  mask-image: none;
+  transition: max-height var(--expand-dur) var(--spring);
+}
+
+.row .meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.row .domain {
+  flex: none;
+}
+
+.row .snippet {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity var(--motion);
+}
+
+/* The card shows the full description — fade the cramped inline copy. */
+.row.expanded .snippet {
+  opacity: 0;
+}
+
+/* Literal query hits — emphasized, never louder than the text itself. */
+.row b {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.row .title b {
+  text-decoration: underline;
+  text-decoration-color: var(--hairline);
+  text-underline-offset: 2px;
+}
+
+.chip {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 9px;
+  background: var(--chip-bg);
+  font-size: 10.5px;
+}
+
+/* Secondary actions: hidden at rest, revealed on hover/selection (rule 4). */
+.row .actions {
+  display: flex;
+  gap: var(--space-1);
+  opacity: 0;
+  transition: opacity var(--motion);
+}
+
+.row:hover .actions,
+.row.selected .actions {
+  opacity: 1;
+}
+
+.action-btn {
+  position: relative; /* anchors its styled tooltip */
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: var(--chip-bg);
+  color: var(--text);
+}
+
+.action-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Styled tooltip for every action (native titles are banned): the aria-label
+   doubles as copy. Same hover-intent delay as the date tooltip. */
+.action-btn::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  padding: 4px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 10.5px;
+  font-weight: 400;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion);
+}
+
+.action-btn:hover::after {
+  opacity: 1;
+  transition-delay: 320ms;
+}
+
+/* Dead link: a quiet mark after the domain, never an alarm — the bookmark
+   stays fully searchable and the site may just have been down that day. */
+.dead-mark {
+  position: relative; /* anchors its styled tooltip */
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.dead-mark svg {
+  width: 11px;
+  height: 11px;
+}
+
+.dead-mark::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  padding: 4px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 10.5px;
+  font-weight: 400;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion);
+}
+
+.dead-mark:hover::after {
+  opacity: 1;
+  transition-delay: 320ms;
+}
+
+/* The card spells it out in words. */
+.detail-dead {
+  color: var(--muted);
+  flex: none;
+}
+
+/* Copy success: the icon flips to an accent check with a tiny pop — a
+   clipboard write is otherwise invisible and reads as a dead button. */
+.action-btn.copied {
+  color: var(--accent);
+  animation: copied-pop 240ms var(--settle);
+}
+
+@keyframes copied-pop {
+  40% {
+    transform: scale(1.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action-btn.copied {
+    animation: none;
+  }
+}
+
+/* --- floating overlay surfaces: the row context menu and the browse-control
+   dropdowns share one material, so every menu in the popup reads as one design. */
+.overlay-menu {
+  position: fixed; /* body-level, escapes the list's overflow clip (like #toast) */
+  z-index: 6;
+  min-width: 196px;
+  padding: var(--space-1);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+  opacity: 0;
+  transform: scale(0.97);
+  transform-origin: top left;
+}
+
+.overlay-menu.open {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity var(--motion),
+    transform var(--motion);
+}
+
+.overlay-menu button {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.overlay-menu button:hover,
+.overlay-menu button:focus-visible {
+  background: var(--selection);
+  outline: none;
+}
+
+/* Destructive reads as destructive at a glance — always red, not hover-gated
+   (a menu is already an explicit gesture; nothing accidental to protect). */
+.overlay-menu button.danger {
+  color: var(--danger);
+}
+
+/* Dropdown flavor: single-choice option panels for the browse controls. The
+   folder list can be long, so the panel scrolls (wheel inside scrolls, never
+   dismisses — dropdown.ts owns that distinction). */
+.overlay-menu.dropdown {
+  min-width: 148px;
+  max-width: calc(100vw - 12px);
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+
+/* Each option leads with a check slot: visible on the current value, blank on
+   the rest — the fixed slot keeps labels aligned like a native menu. */
+.overlay-menu button[role='menuitemradio'] {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.overlay-menu button[role='menuitemradio']::before {
+  content: '';
+  flex: none;
+  width: 11px;
+  height: 11px;
+  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M2 6.5 5 9.5 10 3" fill="none" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+    center / contain no-repeat;
+  background: transparent;
+}
+
+.overlay-menu button[aria-checked='true']::before {
+  background: var(--accent);
+}
+
+.overlay-menu .option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Undo toast: the confirmation IS the escape hatch — never a dialog. */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 2 * var(--space-4));
+  padding: 7px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 5;
+  animation: view-in var(--motion);
+}
+
+#toast span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#toast button {
+  flex: none;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Keyboard hint on the selected row only (rule 11). */
+.row .hint {
+  flex: none;
+  font-size: 10.5px;
+  color: var(--muted);
+  opacity: 0;
+}
+
+.row.selected .hint {
+  opacity: 0.8;
+}
+
+/* --- dwell-expanded detail card (blueprint "Row focus/hover" state) --- */
+
+/* Height animates via the 0fr→1fr grid trick: no JS measurement, content-sized. */
+.row .details {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--collapse-dur) var(--settle);
+}
+
+.row.expanded .details {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--expand-dur) var(--spring);
+}
+
+.details-inner {
+  overflow: hidden;
+  min-height: 0;
+  /* Padding would leak height at 0fr — spacing lives on the children. */
+}
+
+.detail-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin: 6px 0 0 24px; /* 16px favicon + 8px gap — aligns with the title column */
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.detail-url {
+  margin: 6px 0 0 24px;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Edge fades only while the marquee travels — a resting URL keeps a hard edge. */
+.detail-url.masked {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 14px,
+    #000 calc(100% - 14px),
+    transparent
+  );
+}
+
+.detail-url-text {
+  display: inline-block;
+}
+
+/* Airport-board sweep: dwell at each end, glide across the hidden width. */
+.detail-url-text.marquee {
+  animation: detail-marquee var(--marquee-duration, 6s) ease-in-out 900ms infinite alternate;
+}
+
+@keyframes detail-marquee {
+  0%,
+  12% {
+    transform: translateX(0);
+  }
+
+  88%,
+  100% {
+    transform: translateX(var(--marquee-shift, 0));
+  }
+}
+
+.detail-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 7px 0 1px 24px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.detail-folder {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Ellipsize from the left: the tail of a folder path identifies the bookmark,
+   the head is boilerplate ("Other bookmarks / …"). rtl on the clip box moves
+   the overflow side; the isolated ltr inner keeps the text reading normally. */
+.folder-clip {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+}
+
+.folder-text {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.detail-folder svg {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  opacity: 0.8;
+}
+
+.detail-added {
+  flex: none;
+  anchor-name: --bss-added;
+}
+
+/* Exact-date tooltip. Anchor positioning pins it to the "Added" text while its
+   containing block stays the .row — the only way out of .details-inner's
+   overflow clip (which the 0fr height animation requires). */
+.detail-added::after {
+  content: attr(data-exact);
+  /* No box at rest: an invisible (opacity-0) tooltip still occupies layout and
+     widens the scroller — the horizontal-scrollbar wart. allow-discrete +
+     @starting-style below keep the fade despite the display toggle. */
+  display: none;
+  position: absolute;
+  position-anchor: --bss-added;
+  bottom: anchor(top);
+  left: anchor(left);
+  /* flip-inline: a date near the right edge grows its tooltip leftward
+     instead of getting clipped by the scroller. */
+  position-try-fallbacks:
+    flip-block,
+    flip-inline,
+    flip-block flip-inline;
+  margin-bottom: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 10.5px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(2px);
+  pointer-events: none;
+  transition:
+    opacity var(--motion),
+    transform var(--motion),
+    display var(--motion);
+  transition-behavior: allow-discrete;
+}
+
+.detail-added:hover::after {
+  display: block;
+  opacity: 1;
+  transform: none;
+  /* Same hover-intent principle as the card itself, smaller scale. */
+  transition-delay: 320ms;
+}
+
+@starting-style {
+  .detail-added:hover::after {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+}
+
+.empty-state {
+  padding: var(--space-4) var(--space-2);
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Invisible infinite-scroll trigger: needs a layout box for IntersectionObserver. */
+.load-sentinel {
+  height: 1px;
+}
+
+/* --- the two screens: search ⇄ settings (a push, never both at once) --- */
+
+#search-view[hidden],
+#settings-view[hidden] {
+  display: none;
+}
+
+/* Entering a view slides it in from the direction it "came from". The
+   animation (re)starts whenever display flips from none, so the search view
+   only animates on RETURN (.returning is set at first settings-close), never
+   on popup open. */
+#settings-view:not([hidden]) {
+  animation: view-in var(--motion);
+}
+
+#search-view.returning:not([hidden]) {
+  animation: view-back var(--motion);
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+@keyframes view-back {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+/* --- app header: quiet identity left, ONE low-emphasis gear right (rule 5) --- */
+
+#app-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--space-2);
+}
+
+#app-mark {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+#app-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* The gear and the settings X share exact geometry and the same top-right
+   slot: the exit sits where the entrance was — zero pointer travel. */
+#gear,
+#close {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-left: auto;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    opacity var(--motion),
+    background var(--motion),
+    color var(--motion);
+}
+
+#gear {
+  opacity: 0.55;
+}
+
+#gear:hover {
+  opacity: 1;
+  background: var(--chip-bg);
+}
+
+#close:hover {
+  background: var(--chip-bg);
+  color: var(--text);
+}
+
+#gear svg {
+  width: 14px;
+  height: 14px;
+}
+
+#close svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Footer: the one quiet persistent fact. Absent until there is one. */
+#footer {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--hairline);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+#footer:has(#count:empty) {
+  display: none;
+}
+
+/* Second-screen header: title left, the close X in the gear's exact slot. */
+#settings-header {
+  display: flex;
+  align-items: center;
+}
+
+#settings-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#settings {
+  margin-top: var(--space-2);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-label {
+  min-width: 0;
+}
+
+.settings-label .name {
+  display: block;
+}
+
+.settings-label .desc {
+  display: block;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.settings-btn {
+  flex: none;
+  padding: 5px 12px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--chip-bg);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.settings-btn:hover {
+  background: var(--selection);
+}
+
+.settings-btn.danger {
+  color: var(--danger);
+}
+
+/* --- pre-onboarding: the whole popup is one quiet invitation to finish setup --- */
+
+#setup-view[hidden] {
+  display: none;
+}
+
+#setup-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: 44px var(--space-4) 52px;
+}
+
+#setup-mark {
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-1);
+}
+
+#setup-headline {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+#setup-sub {
+  margin: 0;
+  max-width: 250px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+#setup-open {
+  margin-top: var(--space-3);
+  padding: 8px 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter var(--motion);
+}
+
+#setup-open:hover {
+  filter: brightness(1.08);
+}

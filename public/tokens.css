@@ -1,0 +1,77 @@
+/* Visual tokens shared by every extension surface (popup, onboarding).
+   docs/design/ux-blueprint.md is the source of truth — change there first. */
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --hairline: rgba(0, 0, 0, 0.08);
+  --selection: rgba(0, 0, 0, 0.045);
+  --accent: #0071e3;
+  --danger: #d70015;
+  --chip-bg: rgba(0, 0, 0, 0.05);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --radius-row: 8px;
+  --radius-card: 14px;
+  --motion: 140ms ease-out;
+  /* Detail-card bloom: springy on the way open (gentle ~5% overshoot — the
+     "liquid" pop), plain settle on the way closed. */
+  --expand-dur: 380ms;
+  /* Collapse is deliberately quick — leaving a row should feel like release. */
+  --collapse-dur: 160ms;
+  --spring: linear(
+    0,
+    0.06 2.5%,
+    0.23 5.5%,
+    0.51 9.5%,
+    0.77 14%,
+    0.94 18.5%,
+    1.038 24%,
+    1.056 29%,
+    1.04 35%,
+    1.01 44%,
+    0.998 53%,
+    1 65%,
+    1
+  );
+  --settle: cubic-bezier(0.33, 0, 0.2, 1);
+  --title-line-h: 1.45em;
+  /* Liquid-glass bubble: layered translucent gradient + specular top edge +
+     soft lift shadow. On light bg the border/shadow carry the depth. */
+  --glass-grad: linear-gradient(165deg, rgba(255, 255, 255, 0.92), rgba(243, 243, 247, 0.78));
+  --glass-border: rgba(0, 0, 0, 0.07);
+  --glass-shadow: 0 8px 20px rgba(0, 0, 0, 0.13), 0 2px 5px rgba(0, 0, 0, 0.06);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  /* Floating overlays (context menu) sit above OTHER content — near-opaque
+     with a backdrop blur, or the text beneath bleeds through the labels. */
+  --overlay-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.97), rgba(246, 246, 249, 0.94));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --text: #f5f5f7;
+    --muted: #98989d;
+    --hairline: rgba(255, 255, 255, 0.1);
+    --selection: rgba(255, 255, 255, 0.06);
+    --accent: #0a84ff;
+    --danger: #ff453a;
+    --chip-bg: rgba(255, 255, 255, 0.08);
+    --glass-grad: linear-gradient(165deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 10px 24px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    --overlay-bg: linear-gradient(165deg, rgba(50, 50, 54, 0.97), rgba(38, 38, 42, 0.96));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion: 0ms;
+    --expand-dur: 0ms;
+    --collapse-dur: 0ms;
+  }
+}
