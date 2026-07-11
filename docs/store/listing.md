@@ -88,3 +88,7 @@ Starry asks to read your bookmarks because that is the whole point. Page reading
   (5) omnibox "bm" in action.
 - Small promo tile 440×280 (required in practice — tiles without it rank behind).
 - Marquee 1400×560 (optional; only for marquee featuring).
+- Promo video: YouTube URL field in the Store Listing tab. The video is rendered from the
+  `promo/` Remotion project (`promo/out/starry-promo.mp4`, 38.5s, 1080p). Upload to YouTube as
+  Public or Unlisted, then paste the watch URL here and into the README's commented video block
+  (thumbnail already committed at `assets/promo-video-thumb.png`).

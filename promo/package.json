@@ -1,0 +1,35 @@
+{
+  "name": "starry-promo",
+  "version": "1.0.0",
+  "description": "Starry promo video (Remotion) - rendered for the Chrome Web Store listing + YouTube",
+  "repository": {},
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.484",
+    "@remotion/google-fonts": "4.0.484",
+    "@remotion/transitions": "4.0.484",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.484"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.62.1"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

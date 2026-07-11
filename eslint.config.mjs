@@ -13,6 +13,10 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   prettier,
   {
+    // Two tsconfig roots exist in the repo (here and promo/) — pin the parser to this one.
+    languageOptions: { parserOptions: { tsconfigRootDir: import.meta.dirname } },
+  },
+  {
     files: ['src/**/*.ts'],
     rules: {
       '@typescript-eslint/no-magic-numbers': [

@@ -57,3 +57,7 @@ on every push and PR.
 - Store listing copy: `docs/store/listing.md`. Privacy policy: `docs/store/privacy-policy.md`
   — its GitHub URL is referenced from the CWS dashboard, and the manifest `homepage_url`
   points at the repo; if the repo is ever renamed or moved, update all of them together.
+- Promo video: `promo/` (self-contained Remotion project; see `promo/README.md`). Renders
+  `out/starry-promo.mp4` (upload to YouTube, paste the URL into the dashboard's Store Listing
+  tab) and the custom thumbnail (committed at `docs/store/assets/promo-video-thumb.png`, used
+  by the README's clickable video link). The YouTube video should be Public or Unlisted.

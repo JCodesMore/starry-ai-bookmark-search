@@ -18,6 +18,18 @@
   <img src="docs/store/assets/shot-1-search-light.png" width="720" alt="Starry ranking results for an ai agent search, with the top result's card expanded" />
 </p>
 
+<!-- PROMO VIDEO — after uploading promo/out/starry-promo.mp4 to YouTube (Public or Unlisted),
+     replace YOUTUBE_VIDEO_ID below and uncomment this block (it becomes the clickable video
+     preview; consider removing the static screenshot above so there is one hero visual):
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID">
+    <img src="docs/store/assets/promo-video-thumb.png" width="720" alt="Watch the Starry promo video — a 40-second tour" />
+  </a>
+</p>
+-->
+
+
 You saved it. Somewhere. You remember what it was *about*, just not what it was called.
 Ask in your own words and Starry matches meaning, not just letters. Hover any result and
 it blooms into a card with the full URL, folder, and the topics Starry learned for it.
