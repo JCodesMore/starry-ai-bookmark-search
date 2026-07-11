@@ -13,6 +13,14 @@
 
 body {
   width: 380px;
+  /* Chromium hard-caps action popups at 600px tall. If the document ever gets
+     taller — the status line appearing mid-index was enough — the shell widens
+     the popup and bolts a document scrollbar onto it, and overflow: hidden
+     cannot suppress that. So the layout itself may never exceed the cap: the
+     body is a capped flex column and #results is the one child that shrinks. */
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: var(--space-3);
   background: var(--bg);
@@ -24,6 +32,18 @@ body {
   /* All scrolling lives inside #results — never on the popup document itself
      (stray document scrollbars are the classic "cheap extension" tell). */
   overflow: hidden;
+}
+
+#search-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* may shrink below content height so #results absorbs the cap */
+}
+
+/* Header, query, status, browse controls, footer keep their natural height —
+   only the results list gives way when the 600px cap bites. */
+#search-view > :not(#results) {
+  flex: none;
 }
 
 #query {
@@ -137,6 +157,8 @@ body {
 
 #results {
   list-style: none;
+  flex: 0 1 auto;
+  min-height: 0; /* without this, min-height:auto blocks the shrink */
   /* Negative side margins + matching padding: rows keep the input's width while
      the expanded card's shadow gets room to breathe inside the scroll clip. */
   margin: var(--space-2) calc(-1 * var(--space-2)) 0;

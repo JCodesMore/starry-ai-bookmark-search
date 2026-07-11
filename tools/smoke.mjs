@@ -80,6 +80,36 @@ const file = resolve(CONFIG.root, 'tools/screenshots/smoke-popup.png');
 await cdp.screenshot(tab, file);
 check('screenshot captured', true, file);
 
+// The status line appearing mid-index once pushed the document past Chromium's
+// 600px popup cap — the shell then widens the popup and adds a document
+// scrollbar (the "second scrollbar" bug). The tallest state is browse-at-rest
+// (controls row visible) + status, so that's the state this asserts: the
+// capped flex layout must absorb the extra line inside #results.
+const capped = await cdp.evalOnTarget(
+  tab,
+  `(async () => {
+  const input = document.querySelector('#query');
+  input.value = '';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  for (let waited = 0; waited < 3000; waited += 100) {
+    await new Promise((r) => setTimeout(r, 100));
+    if (!document.querySelector('#browse-controls').hidden) break;
+  }
+  document.querySelector('#status').textContent = 'Learning your bookmarks… 53%';
+  await new Promise((r) => setTimeout(r, 120));
+  const h = Math.round(document.body.getBoundingClientRect().height);
+  const browseShown = !document.querySelector('#browse-controls').hidden;
+  const footerVisible = document.querySelector('#footer').offsetParent !== null;
+  document.querySelector('#status').textContent = '';
+  return { h, browseShown, footerVisible };
+})()`,
+);
+check(
+  'status line never pushes the popup past the 600px cap',
+  capped?.h <= 600 && capped.browseShown === true && capped.footerVisible === true,
+  capped,
+);
+
 await cdp.closeTab(tab.id);
 
 const failed = results.filter((r) => !r.ok);
