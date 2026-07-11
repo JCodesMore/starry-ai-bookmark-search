@@ -1,8 +1,9 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import { usePop, useRise } from "../lib/anim";
+import { ShootingStar } from "../starry/ShootingStar";
 import { StarMark } from "../starry/StarMark";
-import { COLORS, HEADLINE, SUBLINE } from "../theme";
+import { COLORS, HEADLINE, SUBLINE, WORDMARK_GRADIENT } from "../theme";
 
 export const IntroScene: React.FC = () => {
   const mark = usePop(4);
@@ -14,11 +15,25 @@ export const IntroScene: React.FC = () => {
     <AbsoluteFill
       style={{ justifyContent: "center", alignItems: "center", gap: 40 }}
     >
+      <ShootingStar
+        delay={62}
+        from={{ x: 0.76, y: 0.11 }}
+        to={{ x: 0.56, y: 0.25 }}
+        scale={0.85}
+      />
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <div style={mark}>
           <StarMark size={148} />
         </div>
-        <h1 style={{ ...HEADLINE, fontSize: 148, fontWeight: 800, ...word }}>
+        <h1
+          style={{
+            ...HEADLINE,
+            fontSize: 148,
+            fontWeight: 800,
+            ...WORDMARK_GRADIENT,
+            ...word,
+          }}
+        >
           Starry
         </h1>
       </div>

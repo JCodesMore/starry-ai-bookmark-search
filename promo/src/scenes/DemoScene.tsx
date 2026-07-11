@@ -25,8 +25,8 @@ const CAPTIONS: Caption[] = [
   {
     from: 8,
     until: 160,
-    title: "Type what you remember.",
-    sub: "In your own words — not the exact title.",
+    title: "Search for what you want.",
+    sub: "Keywords or a phrase — no need to be precise.",
   },
   {
     from: 160,

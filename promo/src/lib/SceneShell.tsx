@@ -22,5 +22,11 @@ export const SceneShell: React.FC<Props> = ({
     [0, 1, 1, holdEnd ? 1 : 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
-  return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
+  // Barely-perceptible push-in (1.2% over the scene) keeps every slide alive.
+  const scale = 1 + 0.012 * (frame / duration);
+  return (
+    <AbsoluteFill style={{ opacity, transform: `scale(${scale})` }}>
+      {children}
+    </AbsoluteFill>
+  );
 };

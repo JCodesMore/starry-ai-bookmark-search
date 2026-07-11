@@ -43,6 +43,15 @@ export const HEADLINE: React.CSSProperties = {
   margin: 0,
 };
 
+// Subtle top-lit gradient for the big wordmarks — premium without being loud.
+export const WORDMARK_GRADIENT: React.CSSProperties = {
+  background: "linear-gradient(180deg, #ffffff 52%, #b9c9ec 100%)",
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  color: "transparent",
+};
+
 export const SUBLINE: React.CSSProperties = {
   fontFamily: FONT,
   fontWeight: 400,

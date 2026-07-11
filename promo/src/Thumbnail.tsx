@@ -4,7 +4,7 @@ import { NightSky } from "./starry/NightSky";
 import { StarMark } from "./starry/StarMark";
 import { PopupMock } from "./demo/PopupMock";
 import { QUERY, RESULTS } from "./demo/demoData";
-import { COLORS, FONT, HEADLINE, SUBLINE } from "./theme";
+import { COLORS, FONT, HEADLINE, SUBLINE, WORDMARK_GRADIENT } from "./theme";
 
 // Custom YouTube/README thumbnail (1280x720): brand + promise + play affordance
 // on the left, the finished demo state (bloomed top hit) on the right.
@@ -27,7 +27,16 @@ export const Thumbnail: React.FC = () => (
     >
       <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
         <StarMark size={84} />
-        <h1 style={{ ...HEADLINE, fontSize: 88, fontWeight: 800 }}>Starry</h1>
+        <h1
+          style={{
+            ...HEADLINE,
+            fontSize: 88,
+            fontWeight: 800,
+            ...WORDMARK_GRADIENT,
+          }}
+        >
+          Starry
+        </h1>
       </div>
       <p
         style={{
