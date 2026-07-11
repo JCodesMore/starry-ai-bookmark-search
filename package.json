@@ -7,7 +7,7 @@
   "description": "Starry — AI bookmark search. MV3 extension (fully local semantic search) with a CDP-driven dev loop.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JCodesMore/starry.git"
+    "url": "https://github.com/JCodesMore/starry-ai-bookmark-search.git"
   },
   "scripts": {
     "build": "node tools/build.mjs",
@@ -16,6 +16,7 @@
     "smoke": "node tools/smoke.mjs",
     "import": "node tools/import-bookmarks.mjs",
     "package": "node tools/package.mjs",
+    "release": "node tools/release.mjs",
     "stop": "node tools/stop.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

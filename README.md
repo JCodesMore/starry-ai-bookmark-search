@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JCodesMore/starry/releases/latest"><img src="https://img.shields.io/github/v/release/JCodesMore/starry" alt="Latest release" /></a>
-  <a href="https://github.com/JCodesMore/starry/actions/workflows/ci.yml"><img src="https://github.com/JCodesMore/starry/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/JCodesMore/starry-ai-bookmark-search/releases/latest"><img src="https://img.shields.io/github/v/release/JCodesMore/starry-ai-bookmark-search" alt="Latest release" /></a>
+  <a href="https://github.com/JCodesMore/starry-ai-bookmark-search/actions/workflows/ci.yml"><img src="https://github.com/JCodesMore/starry-ai-bookmark-search/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
 </p>
 
@@ -56,13 +56,13 @@ auto-update.
 ### From a release (no build needed)
 
 1. Download `starry-vX.Y.Z.zip` from the
-   [latest release](https://github.com/JCodesMore/starry/releases/latest).
+   [latest release](https://github.com/JCodesMore/starry-ai-bookmark-search/releases/latest).
 2. Unzip it somewhere you'll keep it — Chrome loads the extension from that folder.
 3. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and
    pick the unzipped folder.
 
 Manual installs don't auto-update — grab a new zip from the
-[releases page](https://github.com/JCodesMore/starry/releases) now and then.
+[releases page](https://github.com/JCodesMore/starry-ai-bookmark-search/releases) now and then.
 
 ### From source
 

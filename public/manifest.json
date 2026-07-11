@@ -3,7 +3,7 @@
   "name": "Starry — AI Bookmark Search",
   "version": "1.0.0",
   "description": "Find your bookmarks like a simple Google search. Local, private, and free. It just works.",
-  "homepage_url": "https://github.com/JCodesMore/starry",
+  "homepage_url": "https://github.com/JCodesMore/starry-ai-bookmark-search",
   "permissions": ["bookmarks", "offscreen", "favicon", "alarms"],
   "optional_host_permissions": ["<all_urls>"],
   "omnibox": { "keyword": "bm" },

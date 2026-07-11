@@ -18,15 +18,25 @@ store build.
 `Compress-Archive` on Windows, `zip(1)` elsewhere — so the Linux CI runner builds the identical
 artifact.
 
-## Cutting a release
+## Cutting a release — one command
 
-1. Bump the version in **both** `public/manifest.json` and `package.json`.
-2. Commit, then `git tag vX.Y.Z` and `git push origin main --tags`.
-3. `.github/workflows/release.yml` runs the gate, verifies tag ↔ manifest version (a mismatch
-   fails the run), packages, and publishes the GitHub Release with the zip attached.
-4. Polish the notes: write install-first release notes to a temp file and apply with
-   `gh release edit vX.Y.Z --notes-file <file>`. Always state that manual installs don't
-   auto-update.
+```
+npm run release -- patch                      # or minor | major | X.Y.Z
+npm run release -- patch --notes <file>       # with hand-written release notes
+```
+
+`tools/release.mjs` runs the whole cycle: preflight (clean `main`, synced with origin, tag
+free) → bumps `public/manifest.json` + `package.json`/`package-lock.json` together → runs
+`npm run package` (store build + sanity checks → `release/starry-vX.Y.Z.zip`, the CWS
+upload) → commits `Release vX.Y.Z` (the pre-commit hook runs the full gate) → tags → pushes
+main + tag atomically → watches `.github/workflows/release.yml` gate, package, and publish
+the GitHub Release with the zip attached (tag ↔ manifest version enforced; a mismatch fails
+the run) → applies `--notes` if given, else the generated notes stand. It prints the release
+URL and the local zip path when done.
+
+Write notes install-first, and always state that manual installs don't auto-update. The one
+manual step left afterward: upload `release/starry-vX.Y.Z.zip` (same bytes as the GitHub
+asset) at the CWS dashboard.
 
 Dry run: trigger `release.yml` via workflow_dispatch — it gates and packages but only uploads
 the zip as a workflow artifact, publishing nothing. `ci.yml` independently runs the full gate

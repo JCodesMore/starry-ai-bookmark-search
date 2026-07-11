@@ -69,7 +69,7 @@ Starry asks to read your bookmarks because that is the whole point. Page reading
   extensions carry the "does not collect data" badge), certify that no data is collected. All
   processing and storage is local; the privacy policy discloses local handling regardless, which
   satisfies the user-data policy's disclosure requirement.
-- **Privacy policy URL:** `https://github.com/JCodesMore/starry/blob/main/docs/store/privacy-policy.md`
+- **Privacy policy URL:** `https://github.com/JCodesMore/starry-ai-bookmark-search/blob/main/docs/store/privacy-policy.md`
   (hosted in the public repo; the manifest's homepage_url points at the repo too).
 
 ## Account & compliance

@@ -4,7 +4,7 @@ Last updated: July 11, 2026
 
 Starry runs entirely on your device. It has no server, no accounts, and no analytics.
 Starry is also open source — the complete code is public at
-https://github.com/JCodesMore/starry, so every claim below can be verified.
+https://github.com/JCodesMore/starry-ai-bookmark-search, so every claim below can be verified.
 
 ## What Starry accesses
 
