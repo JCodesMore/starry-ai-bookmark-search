@@ -9,6 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/JCodesMore/starry/releases/latest"><img src="https://img.shields.io/github/v/release/JCodesMore/starry" alt="Latest release" /></a>
+  <a href="https://github.com/JCodesMore/starry/actions/workflows/ci.yml"><img src="https://github.com/JCodesMore/starry/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
+</p>
+
+<p align="center">
   <img src="docs/store/assets/shot-1-search-light.png" width="720" alt="Starry ranking results for an ai agent search, with the top result's card expanded" />
 </p>
 
@@ -42,13 +48,30 @@ data never leaves your machine, architecturally, not just as a promise.
 
 ## Install
 
-- **Chrome Web Store:** submission in review — link coming here as soon as it's live.
-- **From source:**
-  1. `npm install && npm run build`
-  2. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, pick `dist/`.
-  3. Search works within about a minute (baseline index). Optional page reading continues
-     quietly in the background — a status line in the popup shows progress and disappears
-     when done.
+### Chrome Web Store
+
+Submission in review — the link will appear here the moment it's live. Store installs
+auto-update.
+
+### From a release (no build needed)
+
+1. Download `starry-vX.Y.Z.zip` from the
+   [latest release](https://github.com/JCodesMore/starry/releases/latest).
+2. Unzip it somewhere you'll keep it — Chrome loads the extension from that folder.
+3. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and
+   pick the unzipped folder.
+
+Manual installs don't auto-update — grab a new zip from the
+[releases page](https://github.com/JCodesMore/starry/releases) now and then.
+
+### From source
+
+1. `npm install && npm run build`
+2. Load `dist/` the same way: `chrome://extensions` → **Developer mode** → **Load unpacked**.
+
+Either way, search works within about a minute (baseline index). Optional page reading
+continues quietly in the background — a status line in the popup shows progress and
+disappears when done.
 
 ## Privacy
 

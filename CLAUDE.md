@@ -59,6 +59,10 @@ npm run package                    # store-manifest build → sanity checks → 
                                    # NOTE: public/manifest.json is STORE truth (optional_host_permissions);
                                    # the default dev build rewrites them to required so CDP suites
                                    # never hit the native permission prompt (tools/build.mjs --store skips)
+                                   # RELEASE: bump version in public/manifest.json + package.json →
+                                   # commit → `git tag vX.Y.Z` → `git push origin main --tags`;
+                                   # .github/workflows/release.yml gates, packages, and publishes
+                                   # the GitHub Release with the zip attached (tag must match manifest)
 node tools/rank-of.mjs <substr> "q" ...  # where a bookmark ranks per query (full scored list)
 node tools/tune.mjs                # fusion-weight sweep over goldens (via message override)
 node tools/tag-scores.mjs <substr> # zero-shot tag cosines for a live record's tag text

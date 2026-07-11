@@ -46,11 +46,16 @@ const zip = resolve(releaseDir, `starry-v${version}.zip`);
 rmSync(zip, { force: true });
 
 // Zip the CONTENTS of dist (manifest at root), not the dist folder itself.
-execFileSync('powershell.exe', [
-  '-NoProfile',
-  '-Command',
-  `Compress-Archive -Path "${dist}\\*" -DestinationPath "${zip}"`,
-]);
+// Windows: Compress-Archive. Elsewhere (incl. the release CI runner): zip(1).
+if (process.platform === 'win32') {
+  execFileSync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    `Compress-Archive -Path "${dist}\\*" -DestinationPath "${zip}"`,
+  ]);
+} else {
+  execFileSync('zip', ['-qr', zip, '.'], { cwd: dist });
+}
 
 const mb = (statSync(zip).size / (1024 * 1024)).toFixed(1);
 console.log(`packaged: ${zip} (${mb} MB, v${version})`);
