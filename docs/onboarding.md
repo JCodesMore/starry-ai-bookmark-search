@@ -26,12 +26,14 @@ rules sit above everything below: **don't clobber** (never overwrite what exists
 
    Delegate this survey to subagents briefed from the goal so it doesn't eat main context
    (`engineering/delegation-and-context.md`); you orchestrate and verify what they report.
-3. **Fill the operating files with reality — don't overwrite.** The freshly installed `CLAUDE.md` is
-   a near-empty template: put the real build/run/test commands and key paths into it. If a
-   `CLAUDE.md` / `AGENTS.md` already existed, it was kept on install — **reconcile** it (ensure
-   `CLAUDE.md` imports `@AGENTS.md`; fold genuinely useful existing notes in) rather than replacing
-   it. Start the docs from the survey (`engineering/memory-and-docs.md`): an architecture/overview
-   doc that reflects the real system, so future tasks and subagents brief from fact.
+3. **Fill the operating files with reality — don't overwrite.** `CLAUDE.md` stays exactly one
+   line — `@AGENTS.md` — so there is a single always-on surface. Put the project's reality into
+   `AGENTS.md` itself, keeping only what applies to *every* task (identity, layout, the core
+   loop, hard rules); everything task-specific goes into `docs/` files added to the Routing
+   table. If a `CLAUDE.md` / `AGENTS.md` already existed, it was kept on install —
+   **reconcile** it (fold genuinely useful existing notes in) rather than replacing it. Start
+   the docs from the survey (`engineering/memory-and-docs.md`): an architecture/overview doc
+   that reflects the real system, so future tasks and subagents brief from fact.
 4. **Calibrate the standards & gate to the code — adopt forward.** Do not retrofit the whole
    codebase to the standards in one pass.
    - **Get a gate green on the code as it is.** If lint/types/tests already exist, run them and make
@@ -71,8 +73,8 @@ debt-laden codebase is not.
 ## Onboarding checklist
 - [ ] Goal + verifiable finish line set
 - [ ] Codebase surveyed: stack+versions, architecture, conventions, real build/run/test commands
-- [ ] `CLAUDE.md` filled with real commands + key paths (existing files reconciled, not overwritten)
-- [ ] `CLAUDE.md` imports `@AGENTS.md`
+- [ ] `AGENTS.md` filled with real commands + key paths (every-task material only; the rest in routed `docs/`)
+- [ ] `CLAUDE.md` is exactly `@AGENTS.md`
 - [ ] Gate assembled/identified and green on the code as-is (baseline, to ratchet up)
 - [ ] Gate wired into a pre-commit hook (green at baseline)
 - [ ] House style matched; full standards applied to new code; conflicts flagged, not silently fixed

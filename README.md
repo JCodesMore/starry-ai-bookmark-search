@@ -84,7 +84,8 @@ them. Nothing is sent anywhere. The full policy is in
 ## Development
 
 The repo has a fully automated dev loop against an isolated browser instance (CDP) — see
-[CLAUDE.md](CLAUDE.md). Quality gate: `npm run gate` (format + lint + strict types + 232 tests),
+[AGENTS.md](AGENTS.md) and [docs/dev-loop.md](docs/dev-loop.md). Quality gate: `npm run gate`
+(format + lint + strict types + 232 tests),
 enforced by a pre-commit hook. Search quality is measured, not vibed: `node tools/eval.mjs`
 runs a golden-query suite against a real 1,300+ bookmark corpus (hit@k / MRR; substring
 baseline 25% → enriched hybrid pipeline 100%, MRR 0.82). Keep personal golden queries in a

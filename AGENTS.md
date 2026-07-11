@@ -1,8 +1,49 @@
-# Agent operating manual
+# Starry — agent operating manual
 
 > **This file is always in context — keep it lean.** It holds only what applies to *every* task.
 > Detailed, task-specific guidance lives in `docs/` and is loaded **on demand** via the Routing
 > table below. Load a doc only when its task applies; don't pre-load everything.
+
+## The project
+
+Starry — an MV3 Chrome extension: free, fully local semantic search over bookmarks. Developed
+and tested in a **dedicated Comet dev browser instance** driven over the Chrome DevTools
+Protocol; no manual clicking in `chrome://extensions` is ever needed.
+
+- `src/` — TypeScript extension source (strict; bundled by esbuild)
+- `public/` — static extension assets (manifest.json, popup.html) copied into the build
+- `dist/` — built unpacked extension (gitignored; what the dev browser loads)
+- `tools/` — zero-dependency Node dev-loop + build scripts (Node 22+, global fetch/WebSocket)
+- `.dev-profile/` — isolated browser profile for the dev instance (gitignored)
+- `docs/` — this manual's routed docs, plus architecture, decisions, research, store listing
+
+## The dev loop (every task runs through it)
+
+```
+npm run browser   # launch/attach dev Comet with CDP on :9222, ensure dist/ loaded (idempotent)
+npm run reload    # BUILD + reload extension; exit 1 + real error if the new code fails to load
+npm run smoke     # e2e checks: SW ping, bookmarks API, popup UI search, screenshot
+npm run gate      # format:check + lint + typecheck + tests (pre-commit hook runs this)
+npm run stop      # cleanly close the dev browser
+```
+
+Standard iteration: **edit → `npm run reload` → `npm run smoke` → view
+`tools/screenshots/smoke-popup.png`**. Reload clears Chrome's sticky extension error log first,
+so reported errors always belong to the current code. Fast file-scoped checks while iterating:
+`npx eslint src/lib/url.ts`, `npx vitest run src/lib/url.test.ts`. The full
+diagnostic/verification catalog (eval, UI suites, DB inspection, test-bookmark import) is in
+`docs/dev-loop.md` — routed below.
+
+## Hard rules (this environment)
+
+- **Never touch the user's main Comet browser** (their profile, their process). The dev
+  instance is fully isolated via `--user-data-dir=.dev-profile` and is the only thing listening
+  on CDP port 9222. `tools/stop.mjs` only closes via that port.
+- The user's main browser has the Claude-in-Chrome extension connected — never reload/kill that
+  extension; it is the session's browser control channel.
+- Extension ID is derived from the unpacked path (currently `dist/`), so it is stable per
+  machine but CHANGES if the load path moves — never hardcode it; read it from
+  `npm run browser` output or `findExtension()` in `tools/cdp.mjs`.
 
 ## Prime directives (always apply)
 
@@ -62,6 +103,9 @@ assume it inherited the rules.
 
 | When your task involves… | Read | Why |
 |---|---|---|
+| Driving or verifying the extension in the dev browser (diagnostics, UI suites, search-quality eval, DB peeks, importing test bookmarks) | `docs/dev-loop.md` | the full CDP tool catalog + how `tools/` works |
+| Packaging, versioning, cutting a release, or Chrome Web Store work | `docs/release.md` | two-manifest pattern + tag-driven release pipeline + store assets |
+| Understanding or changing the extension's internals (indexing, search, ranking, UI) | `docs/architecture.md` | module map + data flow; decisions (with rejected alternatives) in `docs/decisions/` |
 | Choosing a library / version / API / config | `docs/engineering/research.md` | how to verify before deciding |
 | Planning heavy/parallel work; delegating to subagents | `docs/engineering/delegation-and-context.md` | preserve context + delegate without degrading output |
 | Setting up or maintaining memory & docs | `docs/engineering/memory-and-docs.md` | the durable-brain methodology |
