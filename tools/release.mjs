@@ -1,12 +1,17 @@
 // One-command release cycle. Usage:
-//   npm run release -- patch|minor|major|X.Y.Z [--notes <file>]
+//   npm run release -- patch|minor|major|X.Y.Z [notes-file]
+//
+// Arguments are positional and order-independent: a bump word (or exact
+// version) picks the version, a path to an existing file becomes the release
+// notes. No flags — npm and PowerShell both eat "--"-style flags on the way
+// through ("--" itself is stripped by PowerShell, then npm claims --foo).
 //
 // Does the whole thing: preflight (clean main, synced with origin, tag free) →
 // version bump in public/manifest.json + package.json/package-lock.json →
 // `npm run package` (store build + sanity checks → release/starry-vX.Y.Z.zip,
 // the Chrome Web Store upload) → commit (pre-commit hook runs the full gate) →
 // tag → atomic push → watch .github/workflows/release.yml publish the GitHub
-// Release → apply --notes if given. See docs/release.md.
+// Release → apply the notes if given. See docs/release.md.
 import { execFileSync, execSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -28,13 +33,15 @@ function fail(msg) {
 }
 
 // --- arguments -------------------------------------------------------------
-const args = process.argv.slice(2);
-const notesIdx = args.indexOf('--notes');
-if (notesIdx !== -1 && !args[notesIdx + 1]) fail('--notes needs a file path');
-const notesFile = notesIdx === -1 ? null : resolve(CONFIG.root, args[notesIdx + 1]);
-if (notesFile && !existsSync(notesFile)) fail(`--notes file not found: ${notesFile}`);
-const bump = args.filter((a, i) => i !== notesIdx && i !== notesIdx + 1)[0];
-if (!bump) fail('usage: npm run release -- patch|minor|major|X.Y.Z [--notes <file>]');
+let bump = null;
+let notesFile = null;
+for (const a of process.argv.slice(2)) {
+  if (a === '--notes') continue; // tolerated if a shell lets it through
+  if (['patch', 'minor', 'major'].includes(a) || /^\d+\.\d+\.\d+$/.test(a)) bump = a;
+  else if (existsSync(resolve(CONFIG.root, a))) notesFile = resolve(CONFIG.root, a);
+  else fail(`unknown argument "${a}" — not a bump (patch|minor|major|X.Y.Z) or an existing file`);
+}
+if (!bump) fail('usage: npm run release -- patch|minor|major|X.Y.Z [notes-file]');
 
 const manifestPath = resolve(CONFIG.root, 'public/manifest.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));

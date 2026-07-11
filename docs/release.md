@@ -22,8 +22,12 @@ artifact.
 
 ```
 npm run release -- patch                      # or minor | major | X.Y.Z
-npm run release -- patch --notes <file>       # with hand-written release notes
+npm run release -- patch notes.md             # with hand-written release notes
 ```
+
+Arguments are positional and order-independent (a bump word or exact version, and optionally a
+path to an existing notes file) — no flags, because PowerShell strips a bare `--` and npm then
+claims `--foo` flags for itself.
 
 `tools/release.mjs` runs the whole cycle: preflight (clean `main`, synced with origin, tag
 free) → bumps `public/manifest.json` + `package.json`/`package-lock.json` together → runs
@@ -31,8 +35,8 @@ free) → bumps `public/manifest.json` + `package.json`/`package-lock.json` toge
 upload) → commits `Release vX.Y.Z` (the pre-commit hook runs the full gate) → tags → pushes
 main + tag atomically → watches `.github/workflows/release.yml` gate, package, and publish
 the GitHub Release with the zip attached (tag ↔ manifest version enforced; a mismatch fails
-the run) → applies `--notes` if given, else the generated notes stand. It prints the release
-URL and the local zip path when done.
+the run) → applies the notes file if given, else the generated notes stand. It prints the
+release URL and the local zip path when done.
 
 Write notes install-first, and always state that manual installs don't auto-update. The one
 manual step left afterward: upload `release/starry-vX.Y.Z.zip` (same bytes as the GitHub
