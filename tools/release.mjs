@@ -88,6 +88,9 @@ try {
 console.log(`\n${current} → ${next}`);
 manifest.version = next;
 writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+// JSON.stringify expands arrays that prettier keeps inline — reformat to the
+// house style or the pre-commit gate rejects the release commit.
+npm('exec -- prettier --write public/manifest.json');
 npm(`version --no-git-tag-version ${next}`); // package.json + package-lock.json
 
 // --- build + validate the exact bytes that ship, BEFORE committing anything --
