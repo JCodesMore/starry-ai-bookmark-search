@@ -15,19 +15,10 @@
 </p>
 
 <p align="center">
-  <img src="docs/store/assets/shot-1-search-light.png" width="720" alt="Starry ranking results for an ai agent search, with the top result's card expanded" />
-</p>
-
-<!-- PROMO VIDEO — after uploading promo/out/starry-promo.mp4 to YouTube (Public or Unlisted),
-     replace YOUTUBE_VIDEO_ID below and uncomment this block (it becomes the clickable video
-     preview; consider removing the static screenshot above so there is one hero visual):
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID">
+  <a href="https://www.youtube.com/watch?v=fpB1Djvemlw">
     <img src="docs/store/assets/promo-video-thumb.png" width="720" alt="Watch the Starry promo video — the quick tour" />
   </a>
 </p>
--->
 
 
 You saved it. Somewhere. You remember what it was *about*, just not what it was called.

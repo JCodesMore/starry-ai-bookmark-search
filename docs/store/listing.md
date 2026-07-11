@@ -89,6 +89,7 @@ Starry asks to read your bookmarks because that is the whole point. Page reading
 - Small promo tile 440×280 (required in practice — tiles without it rank behind).
 - Marquee 1400×560 (optional; only for marquee featuring).
 - Promo video: YouTube URL field in the Store Listing tab. The video is rendered from the
-  `promo/` Remotion project (`promo/out/starry-promo.mp4`, ~44s, 1080p). Upload to YouTube as
-  Public or Unlisted, then paste the watch URL here and into the README's commented video block
-  (thumbnail already committed at `assets/promo-video-thumb.png`).
+  `promo/` Remotion project (`promo/out/starry-promo.mp4`, ~44s, 1080p). LIVE:
+  `https://www.youtube.com/watch?v=fpB1Djvemlw` — paste this into the dashboard field (video
+  must be Public or Unlisted). The README hero links to it via
+  `assets/promo-video-thumb.png`; set the same PNG as the YouTube custom thumbnail.

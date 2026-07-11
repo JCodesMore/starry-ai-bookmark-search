@@ -3,6 +3,9 @@
 A [Remotion](https://www.remotion.dev) project that renders Starry's promo video (for the
 Chrome Web Store listing + YouTube) and the custom video thumbnail (for YouTube + the README).
 
+Live video: <https://www.youtube.com/watch?v=fpB1Djvemlw> (linked from the README hero and the
+CWS listing; if you re-render with meaningful changes, upload a new version and update both).
+
 Everything on screen is faithful to the real product: colors/typography mirror
 `public/tokens.css`, the mark is the exact geometry from `tools/gen-icons.mjs`, the demo
 corpus and expanded-card layout mirror `docs/store/assets/shot-1-search-light.png`, and all

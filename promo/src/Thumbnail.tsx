@@ -46,9 +46,8 @@ export const Thumbnail: React.FC = () => (
           fontWeight: 500,
         }}
       >
-        Find any bookmark
-        <br />
-        by describing it.
+        Find your bookmarks like
+        <br />a simple Google search.
       </p>
       <div
         style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 8 }}
