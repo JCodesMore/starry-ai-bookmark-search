@@ -2,16 +2,17 @@ import React from "react";
 import { AbsoluteFill } from "remotion";
 import { usePop, useRise } from "../lib/anim";
 import { StarMark } from "../starry/StarMark";
-import { HEADLINE, SUBLINE } from "../theme";
+import { COLORS, HEADLINE, SUBLINE } from "../theme";
 
 export const IntroScene: React.FC = () => {
   const mark = usePop(4);
   const word = useRise(14, 30);
-  const sub = useRise(38);
+  const sub1 = useRise(36);
+  const sub2 = useRise(50);
 
   return (
     <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "center", gap: 36 }}
+      style={{ justifyContent: "center", alignItems: "center", gap: 40 }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <div style={mark}>
@@ -21,9 +22,30 @@ export const IntroScene: React.FC = () => {
           Starry
         </h1>
       </div>
-      <p style={{ ...SUBLINE, fontSize: 48, ...sub }}>
-        Search your bookmarks by meaning.
-      </p>
+      {/* The store / GitHub tagline, verbatim (docs/store/listing.md summary). */}
+      <div
+        style={{
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        <p
+          style={{
+            ...SUBLINE,
+            fontSize: 46,
+            color: COLORS.text,
+            fontWeight: 500,
+            ...sub1,
+          }}
+        >
+          Find your bookmarks like a simple Google search.
+        </p>
+        <p style={{ ...SUBLINE, fontSize: 40, ...sub2 }}>
+          Local, private, and free. It just works.
+        </p>
+      </div>
     </AbsoluteFill>
   );
 };

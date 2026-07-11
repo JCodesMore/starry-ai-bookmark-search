@@ -1,13 +1,13 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { usePop, useRise } from "../lib/anim";
-import { StarMark } from "../starry/StarMark";
+import { ShieldMark } from "../starry/ShieldMark";
 import { COLORS, HEADLINE, SUBLINE } from "../theme";
 
 const RING_PERIOD = 75;
 const RING_COUNT = 2;
 
-// Expanding halo rings around the device — "everything happens right here".
+// Expanding halo rings around the shield — "everything stays right here".
 const PulseRings: React.FC = () => {
   const frame = useCurrentFrame();
   return (
@@ -16,7 +16,7 @@ const PulseRings: React.FC = () => {
         const t =
           ((frame + (i * RING_PERIOD) / RING_COUNT) % RING_PERIOD) /
           RING_PERIOD;
-        const size = 300 + t * 320;
+        const size = 280 + t * 300;
         return (
           <div
             key={i}
@@ -40,42 +40,34 @@ const PulseRings: React.FC = () => {
 
 export const PrivacyScene: React.FC = () => {
   const headline = useRise(6);
-  const device = usePop(20, 0.8);
-  const line1 = useRise(48);
-  const line2 = useRise(82);
+  const shield = usePop(18, 0.75);
+  const line1 = useRise(44);
+  const line2 = useRise(68);
 
   return (
     <AbsoluteFill
-      style={{ alignItems: "center", justifyContent: "center", gap: 54 }}
+      style={{ alignItems: "center", justifyContent: "center", gap: 48 }}
     >
       <h1 style={{ ...HEADLINE, ...headline }}>Private by design.</h1>
 
       <div
         style={{
           position: "relative",
-          width: 340,
-          height: 230,
+          width: 250,
+          height: 250,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          ...device,
+          ...shield,
         }}
       >
         <PulseRings />
-        {/* Your computer */}
         <div
           style={{
-            width: 340,
-            height: 230,
-            borderRadius: 24,
-            border: "3px solid rgba(255, 255, 255, 0.28)",
-            background: "rgba(255, 255, 255, 0.04)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            filter: "drop-shadow(0 14px 40px rgba(10, 132, 255, 0.35))",
           }}
         >
-          <StarMark size={96} />
+          <ShieldMark size={230} />
         </div>
       </div>
 
@@ -96,7 +88,7 @@ export const PrivacyScene: React.FC = () => {
             ...line1,
           }}
         >
-          The AI runs entirely on your computer.
+          Everything runs locally.
         </p>
         <p style={{ ...SUBLINE, fontSize: 46, ...line2 }}>
           Your bookmarks never leave your machine.

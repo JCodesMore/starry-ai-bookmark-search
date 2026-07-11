@@ -68,9 +68,7 @@ export const Thumbnail: React.FC = () => (
             }}
           />
         </div>
-        <span style={{ ...SUBLINE, fontSize: 30 }}>
-          Watch the 40-second tour
-        </span>
+        <span style={{ ...SUBLINE, fontSize: 30 }}>Watch the quick tour</span>
       </div>
     </div>
 

@@ -5,7 +5,8 @@ export type Rise = {
   transform: string;
 };
 
-// Springy fade-up entrance, the video's default motion verb.
+// Springy fade-up entrance, the video's default motion verb. Opacity lands
+// well before the motion settles, so elements never linger half-visible.
 export const useRise = (delay: number, distance = 44): Rise => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -16,7 +17,9 @@ export const useRise = (delay: number, distance = 44): Rise => {
     config: { damping: 200, stiffness: 120, mass: 0.9 },
   });
   return {
-    opacity: progress,
+    opacity: interpolate(progress, [0, 0.6], [0, 1], {
+      extrapolateRight: "clamp",
+    }),
     transform: `translateY(${(1 - progress) * distance}px)`,
   };
 };

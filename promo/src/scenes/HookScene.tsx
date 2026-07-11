@@ -80,7 +80,7 @@ export const HookScene: React.FC = () => {
   const frame = useCurrentFrame();
   const line1 = useRise(8);
   const line2 = useRise(30);
-  const beatB = useRise(BEAT_SWAP + 6);
+  const beatB = useRise(BEAT_SWAP + 10);
 
   return (
     <AbsoluteFill>
@@ -91,7 +91,7 @@ export const HookScene: React.FC = () => {
           style={{
             position: "absolute",
             textAlign: "center",
-            opacity: windowOpacity(frame, 0, BEAT_SWAP + 8, 8),
+            opacity: windowOpacity(frame, 0, BEAT_SWAP, 8),
           }}
         >
           <h1 style={{ ...HEADLINE, ...line1 }}>You saved it.</h1>
@@ -112,7 +112,7 @@ export const HookScene: React.FC = () => {
             position: "absolute",
             textAlign: "center",
             maxWidth: 1500,
-            opacity: windowOpacity(frame, BEAT_SWAP + 4, 9999, 8),
+            opacity: windowOpacity(frame, BEAT_SWAP + 6, 9999, 8),
           }}
         >
           <h1 style={{ ...HEADLINE, fontSize: 80, ...beatB }}>

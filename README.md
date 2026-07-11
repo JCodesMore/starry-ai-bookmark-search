@@ -24,7 +24,7 @@
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID">
-    <img src="docs/store/assets/promo-video-thumb.png" width="720" alt="Watch the Starry promo video — a 40-second tour" />
+    <img src="docs/store/assets/promo-video-thumb.png" width="720" alt="Watch the Starry promo video — the quick tour" />
   </a>
 </p>
 -->
