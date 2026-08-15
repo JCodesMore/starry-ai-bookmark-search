@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <a href="https://discord.gg/hrTSX5yTpB"><img src="https://img.shields.io/badge/Join_the_community-Discord-5865F2?style=for-the-badge&amp;logo=discord&amp;logoColor=white" alt="Join the Discord community" /></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/JCodesMore/starry-ai-bookmark-search/releases/latest"><img src="https://img.shields.io/github/v/release/JCodesMore/starry-ai-bookmark-search" alt="Latest release" /></a>
   <a href="https://github.com/JCodesMore/starry-ai-bookmark-search/actions/workflows/ci.yml"><img src="https://github.com/JCodesMore/starry-ai-bookmark-search/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
